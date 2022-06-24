@@ -1,0 +1,146 @@
+---
+title: "Exercicio de laboratorio"
+author: "César A. Galvão - 19/0011572"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(kableExtra)
+library(broom)
+library(car)
+library(dplyr)
+```
+
+# Questao 1
+
+```{r dados}
+tipo <- factor(c("I", "II", "III"))
+tempo <- c(19,20,16,
+           22,21,15,
+           20,33,18,
+           18,27,26,
+           25,40,17)
+dados <- data.frame(tipo, tempo)
+```
+
+## Determine a forma do modelo e as hipóteses consideradas
+
+A comparação das médias dos grupos, neste caso os tipos de circuito, será realizada mediante análise de variância. O modelo escolhido para tal é o modelo de efeitos, expresso na equação a seguir
+
+\begin{equation}
+  y_{ij} = \mu + \tau_i + e_{ij}, \quad i = 1, 2,..., a; \quad j = 1, 2,..., n 
+\end{equation}
+
+em que $\mu$ é a média geral, $\tau_i$ é a média ou efeito dos grupos e $e_{ij}$ é o desvio do elemento. Os grupos são indexados por $i$ e os indivíduos de cada grupo indexados por $j$.
+
+As hipóteses do teste são as seguintes:
+\begin{align}
+  \begin{cases}
+    H_0: \tau_1 = ... = \tau_a = 0, \quad \text{(O efeito de tratamento é nulo)}\\
+    H_1: \exists \tau_i \neq 0
+  \end{cases}
+\end{align}
+
+que equivale dizer
+
+\begin{align}
+  \begin{cases}
+    H_0: \mu_1 = ... = \mu_a\\
+    H_1: \exists \mu_i \neq \mu_j, \, i \neq j.
+  \end{cases}
+\end{align}
+
+## Qual a forma da estatística de teste e sua distribuição amostral?
+
+A estatística de teste é calculada mediante a média ponderada entre a soma dos quadrados dos tratamentos e a soma dos quadrados dos resíduos (quadrados médios dos tratamentos e dos resíduos respectivamente). Sob $H_0$ a estatística de teste tem distribuição $F(a-1, an-a)$. Os graus de liberdade correspondem aos denominadores dos quadrados médios. Especificamente,
+
+\begin{align}
+  \frac{\frac{\text{SQTRAT}}{a-1}}{\frac{\text{SQRES}}{an-a}} = \frac{\text{QMTRAT}}{\text{QMRES}} \sim F(a-1, an-a)
+\end{align}
+
+## Construa a tabela de análise de variância e conclua o teste considerando alfa = 0,05
+
+```{r tabela-anova}
+tabela <- aov(tempo ~ tipo, dados)
+
+broom::tidy(tabela) %>%
+  kbl(align = 'c')%>%
+  kable_paper(full_width = T)
+```
+
+Com base apenas na ANOVA, cujo p-valor é $< 0,05$, há evidências para rejeitar $H_0$, ou seja, existe pelo menos uma média de grupo diferente das demais.
+
+## Quais são as suposições adotadas para a ANOVA? Essas suposições foram satisfeitas para esse experimento?
+
+Para o teste de análise de variâncias, considerando o modelo de efeitos, supõe-se sobre os resíduos, elemento aleatório do lado direito da expressão do modelo:
+
+* independência;
+* normalidade;
+* homogeneidade de variâncias (homocedasticidade).
+
+Por hipótese, supõe-se que as amostras são independentes. Não há, a priori, como testar independência pois entende-se que isso é derivado do desenho do experimento.
+
+A normalidade da distribuição dos resíduos pode ser testada mediante o teste de Shapiro-Wilk.
+
+```{r normalidade-residuos}
+shapiro.test(tabela$residuals)
+```
+O teste assume como hipótese nula a normalidade dos dados amostrais. Com base no p-valor obtido, não há evidências para a rejeição de $H_0$. Isto é, supõe-se normalidade dos dados.
+
+Quando à homocedasticidade, utiliza-se o teste de Levene. A hipótese nula supõe homogeneidade de variâncias entre as amostras.
+
+```{r homocedasticidade}
+#teste de homocedasticidade sobre resíduos
+car::leveneTest(tempo ~ tipo, dados)
+```
+
+De fato, obtém-se p-valor superior a 0.05, sugerindo a não rejeição de $H_0$.
+  
+## Faça comparações entre os pares de médias pelo teste de Tukey e apresente os resultados.
+
+Opta-se pelo teste de Tukey para comparações múltiplas de médias. Trata-se de um teste unilateral para comparação de médias entre grupos de tratamento. Sob $H_0$, ou seja, a igualdade entre as médias comparadas, a estatística de teste segue uma distribuição Tukey, cujos parâmetros são os graus de liberdade do resíduo e o número de comparações:
+
+\begin{align}
+  \frac{|\bar{y}_i. - \bar{y}_j.|}{\sqrt{\frac{\text{QMRES}}{n}}} \stackrel{H_0}{\sim} \text{Tukey} \left( gl. res., n^o comp. \right)
+\end{align}
+
+```{r comparacoes-multiplas}
+TukeyHSD(tabela)
+```
+
+Pelo teste de Tukey, há indícios para rejeição de $H_0$ apenas quando comparados os grupos II e III, corroborando o resultado da análise de variâncias.
+
+## Intervalo de confiança
+
+```{r medias-grupos}
+dados %>%
+  group_by(tipo)%>%
+  summarise(media = mean(tempo))%>%
+  print()
+```
+
+O grupo de menor média de tempo é o grupo III, cuja média é de 18,4. Considerando que a comparação da média do grupo à média global é uma análise de resíduos, utiliza-se como variância QMRES, pois $E\left(\text{QMRES}\right) = \sigma^2$. Dessa forma, calcula-se o intervalo de confiança considerando $\gamma = 0,98$:
+
+```{r IC, echo = FALSE}
+gl <- 15*3 - 3 #(an - a)
+alfa <- (1-0.98)/2
+
+qt(alfa, gl)
+
+IC <- qt(alfa, gl, lower.tail = FALSE)*sqrt(32.56667/15)
+18.4+IC
+18.4-IC
+
+```
+
+
+\begin{align}
+  IC\left( \bar{y}_i.; \gamma \right) &= \bar{y}_i. \pm t_{(an-a, 1-\alpha/2)} \cdot \sqrt{\frac{\text{QMRES}}{n}}\\
+ IC\left( \bar{y}_3.; 0,98 \right) &= 18,4 \pm 2,41847 \cdot \sqrt{\frac{\text{32,56667}}{15}}\\
+  &= 18,4 \pm 3,56\\
+  &= \left[ 14,83 ; 21,96 \right]
+\end{align}
+
