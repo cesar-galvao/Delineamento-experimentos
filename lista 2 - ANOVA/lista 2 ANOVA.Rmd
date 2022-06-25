@@ -113,7 +113,7 @@ TukeyHSD(tabela)
 
 Pelo teste de Tukey, há indícios para rejeição de $H_0$ apenas quando comparados os grupos II e III, corroborando o resultado da análise de variâncias.
 
-## Intervalo de confiança
+## Construa um intervalo de confiança para média do circuito com menores tempos considerando gama = 0,98
 
 ```{r medias-grupos}
 dados %>%
@@ -124,13 +124,13 @@ dados %>%
 
 O grupo de menor média de tempo é o grupo III, cuja média é de 18,4. Considerando que a comparação da média do grupo à média global é uma análise de resíduos, utiliza-se como variância QMRES, pois $E\left(\text{QMRES}\right) = \sigma^2$. Dessa forma, calcula-se o intervalo de confiança considerando $\gamma = 0,98$:
 
-```{r IC, echo = FALSE}
-gl <- 15*3 - 3 #(an - a)
+```{r IC, echo = FALSE, include = FALSE}
+gl <- 3*5 - 3 #(an - a)
 alfa <- (1-0.98)/2
 
 qt(alfa, gl)
 
-IC <- qt(alfa, gl, lower.tail = FALSE)*sqrt(32.56667/15)
+IC <- qt(alfa, gl, lower.tail = FALSE)*sqrt(32.56667/5)
 18.4+IC
 18.4-IC
 
@@ -138,9 +138,56 @@ IC <- qt(alfa, gl, lower.tail = FALSE)*sqrt(32.56667/15)
 
 
 \begin{align}
-  IC\left( \bar{y}_i.; \gamma \right) &= \bar{y}_i. \pm t_{(an-a, 1-\alpha/2)} \cdot \sqrt{\frac{\text{QMRES}}{n}}\\
- IC\left( \bar{y}_3.; 0,98 \right) &= 18,4 \pm 2,41847 \cdot \sqrt{\frac{\text{32,56667}}{15}}\\
-  &= 18,4 \pm 3,56\\
-  &= \left[ 14,83 ; 21,96 \right]
+  IC\left( \bar{y}_i.; \gamma \right) &= \bar{y}_i. \pm t_{(an-a; 1-\alpha/2)} \cdot \sqrt{\frac{\text{QMRES}}{n}}\\
+  &= \bar{y}_3. \pm t_{(15-3; 1-0,01)} \cdot \sqrt{\frac{32,56667}{5}}\\
+  &= \bar{y}_3. \pm t_{(12; 0,99)} \cdot \sqrt{\frac{32,56667}{5}}\\
+ IC\left( \bar{y}_3.; 0,98 \right) &= 18,4 \pm 2,68 \cdot \sqrt{\frac{32,56667}{5}}\\
+  &= 18,4 \pm 6,84\\
+  &= \left[ 11,55 ; 25,24 \right]
 \end{align}
 
+# Exercício de simulação
+
+**Faça um experimento de simulação considerando $a = 4$ tratamentos com $n = 4$ repetições e um valor de $\sigma^2 = 25$. Faça $k = 1000$ iterações em que a hipótese nula da ANOVA seja verdadeira e verifique a proporção de casos com pelo menos um erro do tipo I para os testes de comparações múltiplas de médias usando as técnicas de Tukey e Fisher e verificando se existem diferenças entre as técnicas.**
+
+São realizadas 1000 iterações considerando 4 tratamentos e 4 repetições independentes cada -- portanto amostras de um tamanho total de 16 unidades -- advindas de distribuições normais com variância igual a 25. Dessa forma, são satisfeitos os pressupostos da hipótese nula da ANOVA: (1) independência, (2) normalidade e (3) homocedasticidade.
+
+No bloco abaixo, primeiramente é gerado um seed para controlar a geração das 1000 seed únicos seguintes (cuja parte inteira apenas é considerada), usadas na geração das amostras. Assim garante-se a replicabilidade do experimento. Como todas as amostras são geradas aleatoreamente sem qualquer dependência, considera-se que são independentes. Por fim, cada $\text{amostra}_k; \, k \in \{1, 2, ..., 1000\}$ de tamanho 16 é gerada com um $\text{seed}_k$ correspondente.
+
+```{r geracao-amostras}
+
+#REFAZER - 1000 ITERACOES EM QUE H0 DA ANOVA SEJA VERDADEIRA
+
+#seed inicial para gerar as seeds das amostras
+set.seed(12)
+
+#seeds para a geracao de amostras nas iteracoes
+random <- unique(as.integer(runif(1000, 1, 500000)))
+
+#um vetor que receberá todos os p-valor
+resultados <- c()
+
+for (k in 1:1000){ #mil iteracoes
+  set.seed(random[k]) #seleciona a seed correspondente
+  amostra <- data.frame( 
+    trat = factor(c('I', 'II', 'III', 'IV')),
+    medidas = rnorm(16, sd = 5)) #gera amostras com o seed configurado
+  
+  resultados <- c(resultados,broom::tidy( #registra p-valor na tabela
+    aov(medidas~trat, data = amostra))$p.value[1])
+}
+
+erro_tipo1 <- sum(resultados <= 0.05)
+```
+
+Observa-se da simulação que em `r erro_tipo1` casos houve erro do tipo 1 considerando $\alpha = 0,05$, o que representa `r erro_tipo1/10`% dos casos.
+
+A seguir, são realizados os testes de comparações múltiplas de médias de Tukey e de Fisher.
+
+```{r testes-comp-multiplas}
+
+```
+
+
+
+**Caso os testes de comparação múltipla sejam feitos apenas após o teste da anova ser significativo os resultados do item anteiror são alterados?**
