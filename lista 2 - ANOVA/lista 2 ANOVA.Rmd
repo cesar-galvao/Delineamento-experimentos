@@ -1,9 +1,23 @@
 ---
-title: "Exercicio de laboratorio"
+title: "Exercício de laboratorio 2"
 author: "César A. Galvão - 19/0011572"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document: 
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    keep_tex: yes
+latex_engine: pdflatex
+header-includes:
+  \usepackage{helvet}
+  \renewcommand\familydefault{\sfdefault}
+include-before:
+- '`\newpage{}`{=latex}'
 ---
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -16,7 +30,7 @@ library(dplyr)
 
 # Questao 1
 
-```{r dados}
+```{r dados, echo = FALSE}
 tipo <- factor(c("I", "II", "III"))
 tempo <- c(19,20,16,
            22,21,15,
@@ -24,6 +38,20 @@ tempo <- c(19,20,16,
            18,27,26,
            25,40,17)
 dados <- data.frame(tipo, tempo)
+
+dados %>% 
+  arrange(tipo)%>%
+  knitr::kable(
+    format = "latex",
+    align = "lc",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 
 ## Determine a forma do modelo e as hipóteses consideradas
@@ -63,12 +91,23 @@ A estatística de teste é calculada mediante a média ponderada entre a soma do
 
 ## Construa a tabela de análise de variância e conclua o teste considerando alfa = 0,05
 
-```{r tabela-anova}
+O objeto `tabela <- aov(tempo ~ tipo, dados)` é gerado para criação da tabela a seguir.
+
+```{r tabela-anova, echo = FALSE}
 tabela <- aov(tempo ~ tipo, dados)
 
 broom::tidy(tabela) %>%
-  kbl(align = 'c')%>%
-  kable_paper(full_width = T)
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 
 Com base apenas na ANOVA, cujo p-valor é $< 0,05$, há evidências para rejeitar $H_0$, ou seja, existe pelo menos uma média de grupo diferente das demais.
@@ -83,18 +122,45 @@ Para o teste de análise de variâncias, considerando o modelo de efeitos, supõ
 
 Por hipótese, supõe-se que as amostras são independentes. Não há, a priori, como testar independência pois entende-se que isso é derivado do desenho do experimento.
 
-A normalidade da distribuição dos resíduos pode ser testada mediante o teste de Shapiro-Wilk.
+A normalidade da distribuição dos resíduos pode ser testada mediante o teste de Shapiro-Wilk, realizada utilizando `shapiro.test(tabela$residuals)`, em que `tabela` é o modelo de análise de variâncias gerado anteriormente.
 
-```{r normalidade-residuos}
-shapiro.test(tabela$residuals)
+```{r normalidade-residuos, echo = FALSE}
+shapiro.test(tabela$residuals) %>% 
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 O teste assume como hipótese nula a normalidade dos dados amostrais. Com base no p-valor obtido, não há evidências para a rejeição de $H_0$. Isto é, supõe-se normalidade dos dados.
 
 Quando à homocedasticidade, utiliza-se o teste de Levene. A hipótese nula supõe homogeneidade de variâncias entre as amostras.
 
-```{r homocedasticidade}
+```{r homocedasticidade, echo = FALSE}
 #teste de homocedasticidade sobre resíduos
-car::leveneTest(tempo ~ tipo, dados)
+car::leveneTest(tempo ~ tipo, dados) %>% 
+  tidy() %>%
+  rename("F statistic" = statistic)%>%
+  mutate(teste = "Teste Levene de Homogeneidade") %>%
+  select(teste, everything())%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 
 De fato, obtém-se p-valor superior a 0.05, sugerindo a não rejeição de $H_0$.
@@ -107,19 +173,42 @@ Opta-se pelo teste de Tukey para comparações múltiplas de médias. Trata-se d
   \frac{|\bar{y}_i. - \bar{y}_j.|}{\sqrt{\frac{\text{QMRES}}{n}}} \stackrel{H_0}{\sim} \text{Tukey} \left( gl. res., n^o comp. \right)
 \end{align}
 
-```{r comparacoes-multiplas}
-TukeyHSD(tabela)
+```{r comparacoes-multiplas, echo = FALSE}
+TukeyHSD(tabela) %>% 
+  tidy()%>%
+  select(-null.value)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 
 Pelo teste de Tukey, há indícios para rejeição de $H_0$ apenas quando comparados os grupos II e III, corroborando o resultado da análise de variâncias.
 
 ## Construa um intervalo de confiança para média do circuito com menores tempos considerando gama = 0,98
 
-```{r medias-grupos}
+```{r medias-grupos, echo = FALSE}
 dados %>%
   group_by(tipo)%>%
   summarise(media = mean(tempo))%>%
-  print()
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
 ```
 
 O grupo de menor média de tempo é o grupo III, cuja média é de 18,4. Considerando que a comparação da média do grupo à média global é uma análise de resíduos, utiliza-se como variância QMRES, pois $E\left(\text{QMRES}\right) = \sigma^2$. Dessa forma, calcula-se o intervalo de confiança considerando $\gamma = 0,98$:
@@ -148,7 +237,13 @@ IC <- qt(alfa, gl, lower.tail = FALSE)*sqrt(32.56667/5)
 
 # Exercício de simulação
 
-**Faça um experimento de simulação considerando $a = 4$ tratamentos com $n = 4$ repetições e um valor de $\sigma^2 = 25$. Faça $k = 1000$ iterações em que a hipótese nula da ANOVA seja verdadeira e verifique a proporção de casos com pelo menos um erro do tipo I para os testes de comparações múltiplas de médias usando as técnicas de Tukey e Fisher e verificando se existem diferenças entre as técnicas.**
+*Faça um experimento de simulação considerando $a = 4$ tratamentos com $n = 4$ repetições e um valor de $\sigma^2 = 25$. Faça $k = 1000$ iterações em que a hipótese nula da ANOVA seja verdadeira e verifique a proporção de casos com pelo menos um erro do tipo I para os testes de comparações múltiplas de médias usando as técnicas de Tukey e Fisher e verificando se existem diferenças entre as técnicas.*
+
+*Caso os testes de comparação múltipla sejam feitos apenas após o teste da anova ser significativo os resultados do item anteiror são alterados?*
+
+## Erro Tipo I em comparações múltiplas
+
+## Comparações como proteção contra Erro Tipo I
 
 São realizadas 1000 iterações considerando 4 tratamentos e 4 repetições independentes cada -- portanto amostras de um tamanho total de 16 unidades -- advindas de distribuições normais com variância igual a 25. Dessa forma, são satisfeitos os pressupostos da hipótese nula da ANOVA: (1) independência, (2) normalidade e (3) homocedasticidade.
 
@@ -156,7 +251,7 @@ No bloco abaixo, primeiramente é gerado um seed para controlar a geração das 
 
 ```{r geracao-amostras}
 
-#REFAZER - 1000 ITERACOES EM QUE H0 DA ANOVA SEJA VERDADEIRA
+#No item 1 não precisava fazer a anova, podia pular direto para os testes de comparações múltiplas. Aí no item 2 faz a anova antes de fazer os testes, só faz os testes se rejeitar anova, pra verificar se traz proteção contra o erro tipo 1
 
 #seed inicial para gerar as seeds das amostras
 set.seed(12)
@@ -190,4 +285,3 @@ A seguir, são realizados os testes de comparações múltiplas de médias de Tu
 
 
 
-**Caso os testes de comparação múltipla sejam feitos apenas após o teste da anova ser significativo os resultados do item anteiror são alterados?**
