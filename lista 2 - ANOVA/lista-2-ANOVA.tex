@@ -120,7 +120,7 @@
 
 \title{Exercício de laboratorio 2}
 \author{César A. Galvão - 19/0011572}
-\date{2022-06-25}
+\date{2022-06-26}
 
 \begin{document}
 \maketitle
@@ -411,33 +411,134 @@ técnicas.}
 teste da anova ser significativo os resultados do item anteiror são
 alterados?}
 
-\hypertarget{erro-tipo-i-em-comparauxe7uxf5es-muxfaltiplas}{%
-\subsection{Erro Tipo I em comparações
-múltiplas}\label{erro-tipo-i-em-comparauxe7uxf5es-muxfaltiplas}}
-
-\hypertarget{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}{%
-\subsection{Comparações como proteção contra Erro Tipo
-I}\label{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}}
-
 São realizadas 1000 iterações considerando 4 tratamentos e 4 repetições
 independentes cada -- portanto amostras de um tamanho total de 16
 unidades -- advindas de distribuições normais com variância igual a 25.
-Dessa forma, são satisfeitos os pressupostos da hipótese nula da ANOVA:
-(1) independência, (2) normalidade e (3) homocedasticidade.
+Dessa forma, são satisfeitos os pressupostos da hipótese nula da ANOVA e
+dos testes de comparações múltiplas: (1) independência, (2) normalidade
+e (3) homocedasticidade.
 
-No bloco abaixo, primeiramente é gerado um seed para controlar a geração
-das 1000 seed únicos seguintes (cuja parte inteira apenas é
-considerada), usadas na geração das amostras. Assim garante-se a
-replicabilidade do experimento. Como todas as amostras são geradas
+Para as amostras dos tópicos abaixo, primeiramente é gerado um seed para
+controlar a geração das 1000 seed únicos seguintes (cuja parte inteira
+apenas é considerada), usadas na geração das amostras. Assim garante-se
+a replicabilidade do experimento. Como todas as amostras são geradas
 aleatoreamente sem qualquer dependência, considera-se que são
 independentes. Por fim, cada
 \(\text{amostra}_k; \, k \in \{1, 2, ..., 1000\}\) de tamanho 16 é
 gerada com um \(\text{seed}_k\) correspondente.
 
+\hypertarget{erro-tipo-i-em-comparauxe7uxf5es-muxfaltiplas}{%
+\subsection{Erro Tipo I em comparações
+múltiplas}\label{erro-tipo-i-em-comparauxe7uxf5es-muxfaltiplas}}
+
+Para realizar os testes de comparações múltiplas de médias, foram
+utilizadas as seguintes funções e seus testes correspondentes:
+
+\begin{itemize}
+\tightlist
+\item
+  Teste de Tukey - \texttt{TukeyHSD()};
+\item
+  Teste de Fisher - \texttt{pairwise.t.test()}, sem correção para
+  \(\alpha\);
+\item
+  Teste de Fisher -
+  \texttt{pairwise.t.test(...,\ p.adjust.method\ =\ "bonferroni")},
+  utilizando a correção de Bonferroni para \(\alpha\).
+\end{itemize}
+
+Para o primeiro, foi observado 5.3\% de ocorrência de erro tipo I. Para
+o segundo foi observado 194\% e para o terceiro 39\%.\\
+
+\hypertarget{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}{%
+\subsection{Comparações como proteção contra Erro Tipo
+I}\label{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}}
+
+Observa-se da simulação que em 57 casos houve erro do tipo 1
+considerando \(\alpha = 0,05\), o que representa 5.7\% dos casos. Para
+testar se um teste seguinte de comparações múltiplas auxiliaria em
+reduzir a incidência de erro tipo I, realizou-se os mesmos testes do
+tópico anterior apenas sobre as amostras em que houve esse erro de
+acordo com a ANOVA. O ganho de precisao, ou redução do erro tipo I, é
+exposto na tabela a seguir:
+
+\begin{longtable}{lrr}
+\toprule
+Testes & ET1.dos.testes & Redução....\\
+\midrule
+\endfirsthead
+\multicolumn{3}{@{}l}{\textit{(continued)}}\\
+\toprule
+Testes & ET1.dos.testes & Redução....\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{Tukey} & \cellcolor{gray!15}{46} & \cellcolor{gray!15}{1.1}\\
+Fisher & 57 & 0.0\\
+\cellcolor{gray!15}{Fisher (Bonferroni)} & \cellcolor{gray!15}{38} & \cellcolor{gray!15}{1.9}\\*
+\end{longtable}
+
+Nota-se portanto que, realizando os pós-testes de Tukey ou Fisher com
+correção de Bonferroni, que controlam para esse tipo de erro, é possível
+aumentar a precisão da análise em pelo menos 1\%. Contrariamente, o
+teste de Fisher sem ajuste no p-valor não fornece qualquer melhoria na
+análise, o que é esperado pois tipicamente há inflacionamento de erro
+tipo I.
+
+\hypertarget{anexo-1---cuxf3digo}{%
+\section{Anexo 1 - código}\label{anexo-1---cuxf3digo}}
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\#No item 1 não precisava fazer a anova, podia pular direto para os testes de comparações múltiplas. Aí no item 2 faz a anova antes de fazer os testes, só faz os testes se rejeitar anova, pra verificar se traz proteção contra o erro tipo 1}
+\FunctionTok{library}\NormalTok{(kableExtra)}
+\FunctionTok{library}\NormalTok{(broom)}
+\FunctionTok{library}\NormalTok{(car)}
+\FunctionTok{library}\NormalTok{(dplyr)}
 
+\CommentTok{\# dados questao 1}
+\NormalTok{tipo }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"I"}\NormalTok{, }\StringTok{"II"}\NormalTok{, }\StringTok{"III"}\NormalTok{))}
+\NormalTok{tempo }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{19}\NormalTok{,}\DecValTok{20}\NormalTok{,}\DecValTok{16}\NormalTok{,}
+           \DecValTok{22}\NormalTok{,}\DecValTok{21}\NormalTok{,}\DecValTok{15}\NormalTok{,}
+           \DecValTok{20}\NormalTok{,}\DecValTok{33}\NormalTok{,}\DecValTok{18}\NormalTok{,}
+           \DecValTok{18}\NormalTok{,}\DecValTok{27}\NormalTok{,}\DecValTok{26}\NormalTok{,}
+           \DecValTok{25}\NormalTok{,}\DecValTok{40}\NormalTok{,}\DecValTok{17}\NormalTok{)}
+\NormalTok{dados }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(tipo, tempo)}
+
+\CommentTok{\# tabela anova}
+\NormalTok{tabela }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tipo, dados)}
+\NormalTok{broom}\SpecialCharTok{::}\FunctionTok{tidy}\NormalTok{(tabela)}
+
+\CommentTok{\# teste normalidade shapiro}
+\FunctionTok{shapiro.test}\NormalTok{(tabela}\SpecialCharTok{$}\NormalTok{residuals) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{tidy}\NormalTok{()}
+
+\CommentTok{\# teste homocedasticidade levene}
+\NormalTok{car}\SpecialCharTok{::}\FunctionTok{leveneTest}\NormalTok{(tempo }\SpecialCharTok{\textasciitilde{}}\NormalTok{ tipo, dados) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{tidy}\NormalTok{() }
+
+\CommentTok{\# teste Tukey}
+\FunctionTok{TukeyHSD}\NormalTok{(tabela) }\SpecialCharTok{\%\textgreater{}\%} 
+    \FunctionTok{tidy}\NormalTok{()}
+
+\CommentTok{\# medias dos grupos}
+\NormalTok{dados }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{group\_by}\NormalTok{(tipo)}\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{summarise}\NormalTok{(}\AttributeTok{media =} \FunctionTok{mean}\NormalTok{(tempo))}
+
+\CommentTok{\#IC}
+\NormalTok{gl }\OtherTok{\textless{}{-}} \DecValTok{3}\SpecialCharTok{*}\DecValTok{5} \SpecialCharTok{{-}} \DecValTok{3} \CommentTok{\#(an {-} a)}
+\NormalTok{alfa }\OtherTok{\textless{}{-}}\NormalTok{ (}\DecValTok{1}\FloatTok{{-}0.98}\NormalTok{)}\SpecialCharTok{/}\DecValTok{2}
+
+\FunctionTok{qt}\NormalTok{(alfa, gl)}
+
+\NormalTok{IC }\OtherTok{\textless{}{-}} \FunctionTok{qt}\NormalTok{(alfa, gl, }\AttributeTok{lower.tail =} \ConstantTok{FALSE}\NormalTok{)}\SpecialCharTok{*}\FunctionTok{sqrt}\NormalTok{(}\FloatTok{32.56667}\SpecialCharTok{/}\DecValTok{5}\NormalTok{)}
+\FloatTok{18.4}\SpecialCharTok{+}\NormalTok{IC}
+\FloatTok{18.4}\SpecialCharTok{{-}}\NormalTok{IC}
+
+\CommentTok{\# questao 2 a {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
 \CommentTok{\#seed inicial para gerar as seeds das amostras}
 \FunctionTok{set.seed}\NormalTok{(}\DecValTok{12}\NormalTok{)}
 
@@ -445,26 +546,78 @@ gerada com um \(\text{seed}_k\) correspondente.
 \NormalTok{random }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(}\FunctionTok{as.integer}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{1000}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{500000}\NormalTok{)))}
 
 \CommentTok{\#um vetor que receberá todos os p{-}valor}
-\NormalTok{resultados }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{resultados\_tukey }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{resultados\_fisher }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{resultados\_fisher\_bonferroni }\OtherTok{\textless{}{-}} \DecValTok{0}
 
+\CommentTok{\#prepara os resultados de ANOVA para o bloco seguinte:}
+\NormalTok{resultados\_aov }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{()}
+
+\CommentTok{\#geracao das amostras e registro das ocorrencias}
 \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\DecValTok{1000}\NormalTok{)\{ }\CommentTok{\#mil iteracoes}
   \FunctionTok{set.seed}\NormalTok{(random[k]) }\CommentTok{\#seleciona a seed correspondente}
 \NormalTok{  amostra }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{( }
     \AttributeTok{trat =} \FunctionTok{factor}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}I\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}II\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}III\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}IV\textquotesingle{}}\NormalTok{)),}
     \AttributeTok{medidas =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{16}\NormalTok{, }\AttributeTok{sd =} \DecValTok{5}\NormalTok{)) }\CommentTok{\#gera amostras com o seed configurado}
   
-\NormalTok{  resultados }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(resultados,broom}\SpecialCharTok{::}\FunctionTok{tidy}\NormalTok{( }\CommentTok{\#registra p{-}valor na tabela}
-    \FunctionTok{aov}\NormalTok{(medidas}\SpecialCharTok{\textasciitilde{}}\NormalTok{trat, }\AttributeTok{data =}\NormalTok{ amostra))}\SpecialCharTok{$}\NormalTok{p.value[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas TUKEY}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{TukeyHSD}\NormalTok{(}\FunctionTok{aov}\NormalTok{(medidas }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trat, amostra))}\SpecialCharTok{$}\NormalTok{trat[,}\DecValTok{4}\NormalTok{]}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_tukey }\OtherTok{=}\NormalTok{ resultados\_tukey }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+  
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas FISHER sem ajuste}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{pairwise.t.test}\NormalTok{(amostra}\SpecialCharTok{$}\NormalTok{medidas, amostra}\SpecialCharTok{$}\NormalTok{trat, }\AttributeTok{p.adjust.method =}\StringTok{"none"}\NormalTok{)}\SpecialCharTok{$}\NormalTok{p.value}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_fisher }\OtherTok{=}\NormalTok{ resultados\_fisher }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+  
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas FISHER BONFERRONI}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{pairwise.t.test}\NormalTok{(amostra}\SpecialCharTok{$}\NormalTok{medidas, amostra}\SpecialCharTok{$}\NormalTok{trat, }\AttributeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{)}\SpecialCharTok{$}\NormalTok{p.value}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_fisher\_bonferroni }\OtherTok{=}\NormalTok{ resultados\_fisher\_bonferroni }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+  
+  \CommentTok{\# organizacao dos dados da anova}
+\NormalTok{  temp\_aov }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+    \AttributeTok{amostra =}\NormalTok{ k,}
+    \AttributeTok{pvalor =}\NormalTok{ broom}\SpecialCharTok{::}\FunctionTok{tidy}\NormalTok{( }\CommentTok{\#registra p{-}valor na tabela}
+    \FunctionTok{aov}\NormalTok{(medidas}\SpecialCharTok{\textasciitilde{}}\NormalTok{trat, }\AttributeTok{data =}\NormalTok{ amostra))}\SpecialCharTok{$}\NormalTok{p.value[}\DecValTok{1}\NormalTok{]}
+\NormalTok{  )}
+  
+\NormalTok{  resultados\_aov }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(resultados\_aov,temp\_aov)}
 \NormalTok{\}}
 
-\NormalTok{erro\_tipo1 }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(resultados }\SpecialCharTok{\textless{}=} \FloatTok{0.05}\NormalTok{)}
+\CommentTok{\# questao 2 b {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{erro\_tipo1 }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(resultados\_aov}\SpecialCharTok{$}\NormalTok{pvalor }\SpecialCharTok{\textless{}=} \FloatTok{0.05}\NormalTok{)}
+\NormalTok{n\_erro\_tipo\_I }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(erro\_tipo1)}
+
+\CommentTok{\#um vetor que receberá todos os p{-}valor}
+\NormalTok{resultados\_tukey2 }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{resultados\_fisher2 }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{resultados\_fisher\_bonferroni2 }\OtherTok{\textless{}{-}} \DecValTok{0}
+
+\CommentTok{\#geracao das amostras e registro das ocorrencias}
+\ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in}\NormalTok{ erro\_tipo1)\{ }\CommentTok{\#iteracoes com erro tipo 1}
+  \FunctionTok{set.seed}\NormalTok{(random[k]) }\CommentTok{\#seleciona a seed correspondente}
+\NormalTok{  amostra }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{( }
+    \AttributeTok{trat =} \FunctionTok{factor}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}I\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}II\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}III\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}IV\textquotesingle{}}\NormalTok{)),}
+    \AttributeTok{medidas =} \FunctionTok{rnorm}\NormalTok{(}\DecValTok{16}\NormalTok{, }\AttributeTok{sd =} \DecValTok{5}\NormalTok{)) }\CommentTok{\#gera amostras com o seed configurado}
+  
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas TUKEY}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{TukeyHSD}\NormalTok{(}\FunctionTok{aov}\NormalTok{(medidas }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trat, amostra))}\SpecialCharTok{$}\NormalTok{trat[,}\DecValTok{4}\NormalTok{]}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_tukey2 }\OtherTok{=}\NormalTok{ resultados\_tukey2 }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+  
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas FISHER sem ajuste}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{pairwise.t.test}\NormalTok{(amostra}\SpecialCharTok{$}\NormalTok{medidas, amostra}\SpecialCharTok{$}\NormalTok{trat, }\AttributeTok{p.adjust.method =}\StringTok{"none"}\NormalTok{)}\SpecialCharTok{$}\NormalTok{p.value}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_fisher2 }\OtherTok{=}\NormalTok{ resultados\_fisher2 }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+  
+  \CommentTok{\#vetor de pvalores do teste de comparacoes multiplas FISHER BONFERRONI}
+\NormalTok{  pvalores }\OtherTok{\textless{}{-}} \FunctionTok{pairwise.t.test}\NormalTok{(amostra}\SpecialCharTok{$}\NormalTok{medidas, amostra}\SpecialCharTok{$}\NormalTok{trat, }\AttributeTok{p.adjust.method =} \StringTok{"bonferroni"}\NormalTok{)}\SpecialCharTok{$}\NormalTok{p.value}
+  \ControlFlowTok{if}\NormalTok{(}\FunctionTok{sum}\NormalTok{(pvalores }\SpecialCharTok{\textless{}} \FloatTok{0.05}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{)\{resultados\_fisher\_bonferroni2 }\OtherTok{=}\NormalTok{ resultados\_fisher\_bonferroni2 }\SpecialCharTok{+} \DecValTok{1}\NormalTok{\}}
+\NormalTok{\}}
+
+\NormalTok{tabela\_erros }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{Testes =} \FunctionTok{c}\NormalTok{(}\StringTok{"Tukey"}\NormalTok{, }\StringTok{"Fisher"}\NormalTok{, }\StringTok{"Fisher (Bonferroni)"}\NormalTok{),}
+  \StringTok{\textasciigrave{}}\AttributeTok{ET1 dos testes}\StringTok{\textasciigrave{}} \OtherTok{=} \FunctionTok{c}\NormalTok{(resultados\_tukey2, resultados\_fisher2, resultados\_fisher\_bonferroni2),}
+  \StringTok{\textasciigrave{}}\AttributeTok{Redução (\%)}\StringTok{\textasciigrave{}} \OtherTok{=}\NormalTok{ (n\_erro\_tipo\_I}\SpecialCharTok{{-}}\FunctionTok{c}\NormalTok{(resultados\_tukey2, resultados\_fisher2, resultados\_fisher\_bonferroni2))}\SpecialCharTok{/}\DecValTok{10}
+\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-Observa-se da simulação que em 57 casos houve erro do tipo 1
-considerando \(\alpha = 0,05\), o que representa 5.7\% dos casos.
-
-A seguir, são realizados os testes de comparações múltiplas de médias de
-Tukey e de Fisher.
 
 \end{document}
