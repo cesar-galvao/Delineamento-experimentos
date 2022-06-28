@@ -120,7 +120,7 @@
 
 \title{Exercício de laboratorio 2}
 \author{César A. Galvão - 19/0011572}
-\date{2022-06-26}
+\date{2022-06-27}
 
 \begin{document}
 \maketitle
@@ -382,8 +382,7 @@ II & 28.2\\
 \end{longtable}
 
 O grupo de menor média de tempo é o grupo III, cuja média é de 18,4.
-Considerando que a comparação da média do grupo à média global é uma
-análise de resíduos, utiliza-se como variância QMRES, pois
+Utiliza-se como variância QMRES, pois
 \(E\left(\text{QMRES}\right) = \sigma^2\). Dessa forma, calcula-se o
 intervalo de confiança considerando \(\gamma = 0,98\):
 
@@ -448,19 +447,19 @@ utilizadas as seguintes funções e seus testes correspondentes:
 \end{itemize}
 
 Para o primeiro, foi observado 5.3\% de ocorrência de erro tipo I. Para
-o segundo foi observado 194\% e para o terceiro 39\%.\\
+o segundo foi observado 19.4\% e para o terceiro 3.9\%.\\
 
 \hypertarget{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}{%
 \subsection{Comparações como proteção contra Erro Tipo
 I}\label{comparauxe7uxf5es-como-proteuxe7uxe3o-contra-erro-tipo-i}}
 
-Observa-se da simulação que em 57 casos houve erro do tipo 1
-considerando \(\alpha = 0,05\), o que representa 5.7\% dos casos. Para
-testar se um teste seguinte de comparações múltiplas auxiliaria em
-reduzir a incidência de erro tipo I, realizou-se os mesmos testes do
-tópico anterior apenas sobre as amostras em que houve esse erro de
-acordo com a ANOVA. O ganho de precisao, ou redução do erro tipo I, é
-exposto na tabela a seguir:
+Observa-se da simulação da análise de variância que em 57 casos houve
+erro do tipo 1 considerando \(\alpha = 0,05\), o que representa 5.7\%
+dos casos. Para testar se um teste seguinte de comparações múltiplas
+auxiliaria em reduzir a incidência de erro tipo I, realizou-se os mesmos
+testes do tópico anterior apenas sobre as amostras em que houve esse
+erro de acordo com a ANOVA. O ganho de precisao, ou redução do erro tipo
+I, é exposto na tabela a seguir:
 
 \begin{longtable}{lrr}
 \toprule
@@ -483,8 +482,9 @@ Fisher & 57 & 0.0\\
 
 Nota-se portanto que, realizando os pós-testes de Tukey ou Fisher com
 correção de Bonferroni, que controlam para esse tipo de erro, é possível
-aumentar a precisão da análise em pelo menos 1\%. Contrariamente, o
-teste de Fisher sem ajuste no p-valor não fornece qualquer melhoria na
+aumentar a precisão da análise em pelo menos 1\%. Isso significa que, de
+57 casos, reduzimos para 46 ou 38 casos em 1000. Contrariamente, o teste
+de Fisher sem ajuste no p-valor não fornece qualquer melhoria na
 análise, o que é esperado pois tipicamente há inflacionamento de erro
 tipo I.
 
