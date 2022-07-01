@@ -59,9 +59,9 @@ dados %>%
   
 A comparação das médias dos grupos será realizada mediante análise de variância. O modelo escolhido para tal é o modelo de efeitos, expresso na equação a seguir
 
-\begin{equation*}
+\begin{align*}
   y_{ij} = \mu + \tau_i + e_{ij}, \quad i = 1, 2,..., a; \quad j = 1, 2,..., n
-\end{equation*}
+\end{align*}
 
 em que $\mu$ é a média geral, $\tau_i$ é a média ou efeito dos grupos -- cada químico sendo considerado um tratamento -- e $e_{ij}$ é o desvio do elemento. Os grupos são indexados por $i$ e os indivíduos de cada grupo indexados por $j$.
 
@@ -117,11 +117,11 @@ Considerando $\alpha = 0,05$ não se rejeita a hipótese nula. Ou seja, não se 
 
 Compararemos dois subgrupos, formados a partir do conjunto inicial de tratamentos, para realizar o teste de comparação de médias utilizando contrastes. A saber, compararemos a média das medidas do químico 2 com a média dos demais. Construimos os seguintes contrastes:
 
-\begin{align*}
+\begin{align}
   &\Gamma_1 = \sum\limits_{i = 1}^{4} c_i \mu_i \quad \text{em que} \sum\limits_{i = 1}^{4} c_i = 0; \text{ e } c_i = \left\{-\frac{1}{3}, 1, -\frac{1}{3}, -\frac{1}{3}\right\}
-\end{align*}
+\end{align}
 
-Para a construção dos demais contrastes ortogonais, construimos
+Para a construção dos demais contrastes ortogonais, fazemos
 
 \begin{align*}
   &\Gamma_2 = \sum\limits_{i = 1}^{3} c_i \mu_i \quad \longrightarrow
@@ -130,7 +130,7 @@ Para a construção dos demais contrastes ortogonais, construimos
   c_i = \left\{0, 0, 1, -1\right\}
 \end{align*}
 
-de modo que todos os $c_i, i = 1, 2, 3$ são todos ortogonais entre si. Dessa forma, as hipóteses testadas são as seguintes:
+de modo que todos os $c_i, i = 1, 2, 3$ são ortogonais entre si. Dessa forma, as hipóteses testadas são as seguintes:
 
 \begin{align*}
   \text{Contraste 1: }&\begin{cases}
@@ -148,19 +148,19 @@ de modo que todos os $c_i, i = 1, 2, 3$ são todos ortogonais entre si. Dessa fo
   \end{cases}
 \end{align*}
 
-A estatística de teste para a realização dos contrastes é definida conforme a expressão a seguir, em que $\text{QMRES}$ é a soma de quadrados dos resíduos da análise de variância exposta anteriormente:
+A estatística de teste para a realização dos contrastes é definida conforme a expressão a seguir, em que $\text{QMRES}$ é a soma de quadrados dos resíduos da ANOVA exposta anteriormente:
 
-\begin{align*}
+\begin{align}
   \frac{\left( \sum\limits_{i = 1}^n c_i \, \bar{y}_{i.}\right)^2}{ \sum\limits_{i = 1}^n c_i^2 \, \frac{\text{QMRES}}{n}} \sim F(1, an-a = 8)
-\end{align*}
+\end{align}
 
 Além disso, considera-se
 
-\begin{align*}
+\begin{align}
   \frac{\left( \sum\limits_{i = 1}^n c_i \, \bar{y}_{i.}\right)^2}{\sum\limits_{i = 1}^n c_i^2} = \frac{\text{SQContraste}_i}{1 \, (g.l.)} = \text{QMContraste}_i
-\end{align*}
+\end{align}
 
-de modo que, se os contrastes forem calculados da forma correta, a soma dos quadrados médios dos contrastes deve ser igual ao quadrado médio dos tratamentos.
+tal que, se os contrastes forem calculados da forma correta, a soma dos quadrados médios dos contrastes deve ser igual ao quadrado médio dos tratamentos.
 
 As estatísticas são expostas na tabela de análise de variância a seguir, decomposta em seus contrastes.
 
@@ -233,16 +233,16 @@ De fato, sob $\alpha = 0,05$, só se pode rejeitar a hipótese nula sob o Contra
 
 Desejamos calcular $\beta(\tau_1 = 0.5, \, \tau_2 = -0.5, \, \tau_3 = 0, \, \tau_4 = 0)$. Para isso, utilizaremos $n = 3$, $\alpha = 0,05$ e $\sigma^2 = \frac{\text{QMRES}}{n}$. A probabilidade será calculada da seguinte forma:
 
-\begin{align*}
+\begin{align}
   P\left( F_{\text{obs}} < F_\text{crit} \bigg| \phi^2 =  \frac{n}{\sigma^2} \sum\limits_{i=1}^{4} \tau_i^2  \right)
-\end{align*}
+\end{align}
 
 em que 
 
-\begin{align*}
-  \phi^2 &= \frac{n}{\frac{a \cdot \text{QMRES}}{n}} \sum\limits_{i=1}^{4} \tau_i^2 \\
+\begin{align}
+  \phi^2 &= \frac{n}{\frac{a \cdot \text{QMRES}}{n}} \sum\limits_{i=1}^{4} \tau_i^2 \nonumber \\
   &= \frac{n^2}{a \cdot \text{QMRES}}\sum\limits_{i=1}^{4} \tau_i^2
-\end{align*}
+\end{align}
 
 é o parâmetro de não-centralidade (pnc ou, em inglês, *ncp*) da distribuição $F$ e, sob $H_0$, $\phi^2 = 0$.
 
@@ -257,7 +257,7 @@ beta <- pf(fcrit, 3, 8, ncp = phi2)
 O valor $F_\text{crit} = F( \gamma = 0,95; gl_1 = 3; gl_2 = 8, \phi^2 = 0)$ é de `r round(qf(0.95,3,8),3)`. Considerando $\phi^2 =$ `r round(phi2, 4)`, obtém-se 
 
 \begin{align*}
-  P\left( F_{\text{obs}} < F_\text{crit} \big| \phi^2 \right) &= P\left( F_{\text{obs}} < 4,066 \big| \phi^2 = 10.487 \right) \\
+  P\left( F_{\text{obs}} < F_\text{crit} \big| \phi^2 \text{ sob } H_1 \right) &= P\left( F_{\text{obs}} < 4,066 \big| \phi^2 = 10.487 \right) \\
   &= 0,446
 \end{align*}
 
