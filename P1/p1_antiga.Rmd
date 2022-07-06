@@ -198,9 +198,9 @@ t13 <- abs(medias[1] - medias[3])/sqrt(2*qmres/4)
 t23 <- abs(medias[2] - medias[3])/sqrt(2*qmres/4)
 
 #pvalores
-p12 <- pt(t12, df = (a*n)-a, lower.tail = FALSE)
-p13 <- pt(t13, df = a*n-a, lower.tail = FALSE)
-p23 <- pt(t23, df = a*n-a, lower.tail = FALSE)
+p12 <- pt(t12, df = (a*n)-a, lower.tail = FALSE)*2
+p13 <- pt(t13, df = a*n-a, lower.tail = FALSE)*2
+p23 <- pt(t23, df = a*n-a, lower.tail = FALSE)*2
 
 pvalores <- data.frame(
   `Grupo 1` = factor(c("20g", "20g", "30g")),
@@ -221,7 +221,7 @@ pvalores  %>%
       latex_options = c("striped", "repeat_header"),
       stripe_color = "gray!15")
 ```
-Considerando $\alpha = 0,05$ se rejeita a hipótese de igualdade entre as médias do grupo de 20g com o grupo 30g e com o grupo de 40g pelo teste de Fisher.
+Considerando $\alpha = 0,05$ se rejeita a hipótese de igualdade entre as médias do grupo de 20g com o grupo 30g pelo teste de Fisher.
 
 
 ## Teste de Tukey
