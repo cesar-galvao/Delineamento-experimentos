@@ -42,46 +42,6 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -127,7 +87,7 @@
 \makeatother
 \subtitle{Contrastes}
 \author{César A. Galvão - 19/0011572}
-\date{2022-07-04}
+\date{2022-07-06}
 
 \begin{document}
 \maketitle
@@ -331,14 +291,13 @@ Para isso, utilizaremos \(n = 3\), \(\alpha = 0,05\) e
 seguinte forma:
 
 \begin{align}
-  P\left( F_{\text{obs}} < F_\text{crit} \bigg| \phi^2 =  \frac{n}{a \sigma^2} \sum\limits_{i=1}^{4} \tau_i^2  \right)
+  P\left( F_{\text{obs}} < F_\text{crit} \bigg| \phi^2 =  \frac{n}{\sigma^2} \sum\limits_{i=1}^{4} \tau_i^2  \right),
 \end{align}
 
-em que
+considerando a variância para os resíduos. Portanto,
 
 \begin{align}
-  \phi^2 &= \frac{n}{\frac{a \cdot \text{QMRES}}{n}} \sum\limits_{i=1}^{4} \tau_i^2 \nonumber \\
-  &= \frac{n^2}{a \cdot \text{QMRES}}\sum\limits_{i=1}^{4} \tau_i^2
+  \phi^2 &= \frac{n}{\text{QMRES}} \sum\limits_{i=1}^{4} \tau_i^2
 \end{align}
 
 é o parâmetro de não-centralidade (pnc ou, em inglês, \emph{ncp}) da
@@ -346,11 +305,11 @@ distribuição \(F\) e, sob \(H_0\), \(\phi^2 = 0\).
 
 O valor
 \(F_\text{crit} = F( \gamma = 0,95; gl_1 = 3; gl_2 = 8, \phi^2 = 0)\) é
-de 4.066. Considerando \(\phi^2 =\) 10.4871, obtém-se
+de 4.066. Considerando \(\phi^2 =\) 13.9828, obtém-se
 
 \begin{align*}
-  P\left( F_{\text{obs}} < F_\text{crit} \big| \phi^2 \text{ sob } H_1 \right) &= P\left( F_{\text{obs}} < 4,066 \big| \phi^2 = 10.487 \right) \\
-  &= 0,446
+  P\left( F_{\text{obs}} < F_\text{crit} \big| \phi^2 \text{ sob } H_1 \right) &= P\left( F_{\text{obs}} < 4,066 \big| \phi^2 = 13,982 \right) \\
+  &= 0,312
 \end{align*}
 
 \hypertarget{qual-deve-ser-o-nuxfamero-de-repetiuxe7uxf5es-nesse-experimento-para-que-o-erro-seja-menor-que-5}{%
@@ -375,9 +334,9 @@ n & $\phi^2$ & $\phi$ & g.l. & $F_{\text{crit}}$ & $\beta$ & Poder\\
 \endfoot
 \bottomrule
 \endlastfoot
-\cellcolor{gray!15}{3} & \cellcolor{gray!15}{10.49} & \cellcolor{gray!15}{3.24} & \cellcolor{gray!15}{8} & \cellcolor{gray!15}{4.07} & \cellcolor{gray!15}{0.45} & \cellcolor{gray!15}{0.55}\\
+\cellcolor{gray!15}{3} & \cellcolor{gray!15}{13.98} & \cellcolor{gray!15}{3.74} & \cellcolor{gray!15}{8} & \cellcolor{gray!15}{4.07} & \cellcolor{gray!15}{0.31} & \cellcolor{gray!15}{0.69}\\
 4 & 18.64 & 4.32 & 12 & 3.49 & 0.12 & 0.88\\
-\cellcolor{gray!15}{5} & \cellcolor{gray!15}{29.13} & \cellcolor{gray!15}{5.40} & \cellcolor{gray!15}{16} & \cellcolor{gray!15}{3.24} & \cellcolor{gray!15}{0.01} & \cellcolor{gray!15}{0.99}\\*
+\cellcolor{gray!15}{5} & \cellcolor{gray!15}{23.30} & \cellcolor{gray!15}{4.83} & \cellcolor{gray!15}{16} & \cellcolor{gray!15}{3.24} & \cellcolor{gray!15}{0.04} & \cellcolor{gray!15}{0.96}\\*
 \end{longtable}
 
 Considerando os valores da tabela, para que o erro tipo II seja menor
@@ -387,86 +346,22 @@ experimento.
 \hypertarget{exercuxedcio-de-simulauxe7uxe3o}{%
 \section{Exercício de simulação}\label{exercuxedcio-de-simulauxe7uxe3o}}
 
-\hypertarget{anexo-1---cuxf3digo}{%
-\section{Anexo 1 - código}\label{anexo-1---cuxf3digo}}
+Considerando uma diferença já conhecida entre os efeitos de tratamento,
+\((\tau_1 = 0.5, \, \tau_2 = -0.5, \, \tau_3 = 0, \, \tau_4 = 0)\),
+foram realizadas 1000 iterações da expressão a seguir, visando obter
+empiricamente a probabilidade de erro tipo II.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#QUESTAO 1}
-\NormalTok{chemist }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"I"}\NormalTok{, }\StringTok{"II"}\NormalTok{, }\StringTok{"III"}\NormalTok{, }\StringTok{"IV"}\NormalTok{))}
-\NormalTok{medida }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"x1"}\NormalTok{, }\StringTok{"x2"}\NormalTok{, }\StringTok{"x3"}\NormalTok{), }\AttributeTok{each =} \DecValTok{4}\NormalTok{))}
-\NormalTok{pmeth }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{84.99}\NormalTok{,}\FloatTok{85.15}\NormalTok{,}\FloatTok{84.72}\NormalTok{,}\FloatTok{84.20}\NormalTok{,}
-           \FloatTok{84.04}\NormalTok{,}\FloatTok{85.13}\NormalTok{, }\FloatTok{84.48}\NormalTok{, }\FloatTok{84.10}\NormalTok{,}
-           \FloatTok{84.38}\NormalTok{, }\FloatTok{84.88}\NormalTok{, }\FloatTok{85.16}\NormalTok{, }\FloatTok{84.55}\NormalTok{)}
-\NormalTok{dados }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(chemist, medida, pmeth)}
+\begin{align}
+  y_{ij} &= \mu + \tau_i + \varepsilon_{ij}
+\end{align}
 
-\NormalTok{n }\OtherTok{\textless{}{-}} \DecValTok{3}
-\NormalTok{a }\OtherTok{\textless{}{-}} \DecValTok{4}
+em que \(\varepsilon_{ij} \sim N(0, \text{QMRES})\) representa o erro
+aleatório, cuja variância e distribuição são os mesmos de \(y_{ij}\).
 
-\NormalTok{tabela\_aov }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(pmeth }\SpecialCharTok{\textasciitilde{}}\NormalTok{ chemist, dados)}
-
-\CommentTok{\# calculo do QMRES}
-\NormalTok{qmres }\OtherTok{\textless{}{-}} \FunctionTok{pull}\NormalTok{(}\FunctionTok{tidy}\NormalTok{(tabela\_aov)[}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{])}
-
-\CommentTok{\#vetores de contrastes}
-\NormalTok{c1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\SpecialCharTok{/}\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\SpecialCharTok{/}\DecValTok{3}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\SpecialCharTok{/}\DecValTok{3}\NormalTok{)}
-\NormalTok{c2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\SpecialCharTok{/}\DecValTok{2}\NormalTok{, }\SpecialCharTok{{-}}\DecValTok{1}\SpecialCharTok{/}\DecValTok{2}\NormalTok{)}
-\NormalTok{c3 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{)}
-
-\CommentTok{\#medias dos tratamentos}
-\NormalTok{medias }\OtherTok{\textless{}{-}} \FunctionTok{tapply}\NormalTok{(pmeth, dados}\SpecialCharTok{$}\NormalTok{chemist, mean)}
-
-\CommentTok{\#estatisticas de teste}
-\NormalTok{statistic }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{( }\CommentTok{\# (soma de ci bar(y).)\^{}2 / soma(ci\^{}2)*(qmres/n)}
-\NormalTok{  ((}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c1))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{sum}\NormalTok{(c1}\SpecialCharTok{\^{}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{qmres}\SpecialCharTok{/}\NormalTok{n)),}
-\NormalTok{  ((}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c2))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{sum}\NormalTok{(c2}\SpecialCharTok{\^{}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{qmres}\SpecialCharTok{/}\NormalTok{n)),}
-\NormalTok{  ((}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c3))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(}\FunctionTok{sum}\NormalTok{(c3}\SpecialCharTok{\^{}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{qmres}\SpecialCharTok{/}\NormalTok{n))}
-\NormalTok{)}
-
-\CommentTok{\#soma dos quadrados dos contrastes}
-\NormalTok{sumsq }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{( }\CommentTok{\# (soma de ci bar(y).)\^{}2 / soma(ci\^{}2)}
-\NormalTok{  (}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c1)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(c1}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{),}
-\NormalTok{  (}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c2)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(c2}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{),}
-\NormalTok{  (}\FunctionTok{sum}\NormalTok{(medias}\SpecialCharTok{*}\NormalTok{c3)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(c3}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
-\NormalTok{)}
-
-\CommentTok{\#pvalores dos contrastes}
-\NormalTok{p.value }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
-  \DecValTok{1}\SpecialCharTok{{-}}\FunctionTok{pf}\NormalTok{(statistic, }\AttributeTok{df1 =} \DecValTok{1}\NormalTok{, }\AttributeTok{df2 =}\NormalTok{ a}\SpecialCharTok{*}\NormalTok{n}\SpecialCharTok{{-}}\NormalTok{a)}
-\NormalTok{)}
-
-\CommentTok{\#tabela com informacoes dos contrastes para a aov}
-\NormalTok{tabela\_contrastes }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
-  \AttributeTok{term =} \FunctionTok{c}\NormalTok{(}\StringTok{"C1"}\NormalTok{, }\StringTok{"C2"}\NormalTok{, }\StringTok{"C3"}\NormalTok{),}
-  \AttributeTok{df =} \DecValTok{1}\NormalTok{,}
-\NormalTok{  sumsq, }\AttributeTok{meansq =}\NormalTok{ sumsq, statistic, p.value}
-\NormalTok{)}
-
-\CommentTok{\#aov discriminada}
-\NormalTok{aov\_contrastes }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(}
-  \FunctionTok{tidy}\NormalTok{(tabela\_aov)[}\DecValTok{1}\NormalTok{,],}
-\NormalTok{  tabela\_contrastes,}
-  \FunctionTok{tidy}\NormalTok{(tabela\_aov)[}\DecValTok{2}\NormalTok{,]}
-\NormalTok{)}
-
-\CommentTok{\# erro tipo II}
-\NormalTok{tau }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(.}\DecValTok{5}\NormalTok{, }\SpecialCharTok{{-}}\NormalTok{.}\DecValTok{5}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{)}
-\NormalTok{phi2 }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{sum}\NormalTok{(tau}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{*}\NormalTok{n}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(a}\SpecialCharTok{*}\NormalTok{qmres)}
-\NormalTok{fcrit }\OtherTok{\textless{}{-}} \FunctionTok{qf}\NormalTok{(}\FloatTok{0.95}\NormalTok{,a}\DecValTok{{-}1}\NormalTok{,a}\SpecialCharTok{*}\NormalTok{n}\SpecialCharTok{{-}}\NormalTok{a)}
-\NormalTok{beta }\OtherTok{\textless{}{-}} \FunctionTok{pf}\NormalTok{(fcrit, }\DecValTok{3}\NormalTok{, }\DecValTok{8}\NormalTok{, }\AttributeTok{ncp =}\NormalTok{ phi2)}
-
-\NormalTok{erro\_tipo2 }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(}
-  \AttributeTok{n =} \FunctionTok{c}\NormalTok{(}\DecValTok{3}\SpecialCharTok{:}\DecValTok{5}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{mutate}\NormalTok{(}
-    \AttributeTok{phi2 =} \FunctionTok{round}\NormalTok{((}\FunctionTok{sum}\NormalTok{(tau}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{*}\NormalTok{n}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}\SpecialCharTok{/}\NormalTok{(a}\SpecialCharTok{*}\NormalTok{qmres),}\DecValTok{2}\NormalTok{),}
-    \AttributeTok{phi =} \FunctionTok{round}\NormalTok{(}\FunctionTok{sqrt}\NormalTok{(phi2),}\DecValTok{2}\NormalTok{),}
-    \AttributeTok{gl2 =}\NormalTok{ a}\SpecialCharTok{*}\NormalTok{n}\SpecialCharTok{{-}}\NormalTok{a,}
-    \AttributeTok{fcrit =} \FunctionTok{round}\NormalTok{(}\FunctionTok{qf}\NormalTok{(}\FloatTok{0.95}\NormalTok{,a}\DecValTok{{-}1}\NormalTok{,gl2),}\DecValTok{2}\NormalTok{),}
-    \AttributeTok{beta =} \FunctionTok{round}\NormalTok{(}\FunctionTok{pf}\NormalTok{(fcrit, a}\DecValTok{{-}1}\NormalTok{, gl2, }\AttributeTok{ncp =}\NormalTok{ phi2),}\DecValTok{2}\NormalTok{),}
-    \AttributeTok{poder =} \DecValTok{1}\SpecialCharTok{{-}}\NormalTok{beta}
-\NormalTok{    )}
-\end{Highlighting}
-\end{Shaded}
-
+Sabe-se que há uma diferença entre os tratamentos, motivo pelo qual uma
+análise de variância para cada conjunto
+\(y_{ij}, i = 1, 2, 3, 4, j = 1,2,3\) deveria apontar p-valor inferior a
+0,05. Considera-se portanto a probabilidade desejada como a proporção
+dos casos em que não se rejeitaria a hipótese nula, que tem valor 0.314
 
 \end{document}
