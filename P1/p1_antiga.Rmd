@@ -378,7 +378,7 @@ Deseja-se testar se o crescimento entre os períodos é diferente. Interessa tes
 pvalor_variancias <- var.test(tabela_arvores$D1, tabela_arvores$D2) %>% tidy() %>%
   pull(p.value)
 ```
-Considerando $H_0$ sendo a igualdade entre as variâncias, obtém-se p-valor `r round(tabela_arvores$D1,3)`. Ou seja, não se rejeita a hipótese de igualdade de variâncias.
+Considerando $H_0$ sendo a igualdade entre as variâncias, obtém-se p-valor `r round(pvalor_variancias,3)`. Ou seja, não se rejeita a hipótese de igualdade de variâncias.
 
 Tomando a hipótese de normalidade dos dados como verdadeira, realiza-se o teste $t$ pareado, para variâncias iguais, com nível de confiança $\gamma = 0,95$. A hipótese nula do teste é a igualdade entre as médias, de modo que o teste realizado é bilateral.
 
