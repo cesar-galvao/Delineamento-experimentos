@@ -80,7 +80,7 @@
 
 \title{P1 antiga}
 \author{César A. Galvão - 19/0011572}
-\date{2022-07-06}
+\date{2022-07-08}
 
 \begin{document}
 \maketitle
@@ -256,14 +256,13 @@ Grupo.1 & Grupo.2 & p.valores\\
 \endfoot
 \bottomrule
 \endlastfoot
-\cellcolor{gray!15}{20g} & \cellcolor{gray!15}{30g} & \cellcolor{gray!15}{0.0185841}\\
-20g & 40g & 0.0013956\\
-\cellcolor{gray!15}{30g} & \cellcolor{gray!15}{40g} & \cellcolor{gray!15}{0.0688969}\\*
+\cellcolor{gray!15}{20g} & \cellcolor{gray!15}{30g} & \cellcolor{gray!15}{0.0371682}\\
+20g & 40g & 0.0027912\\
+\cellcolor{gray!15}{30g} & \cellcolor{gray!15}{40g} & \cellcolor{gray!15}{0.1377938}\\*
 \end{longtable}
 
 Considerando \(\alpha = 0,05\) se rejeita a hipótese de igualdade entre
-as médias do grupo de 20g com o grupo 30g e com o grupo de 40g pelo
-teste de Fisher.
+as médias do grupo de 20g com o grupo 30g pelo teste de Fisher.
 
 \hypertarget{teste-de-tukey}{%
 \subsection{Teste de Tukey}\label{teste-de-tukey}}
@@ -370,5 +369,52 @@ n & $\phi^2$ & $\phi$ & g.l. & $F_{\text{crit}}$ & $\beta$ & Poder\\
 Considerando os valores da tabela, para que o erro tipo II seja menor
 que 50\% são necessários 6 repetições para cada tratamento nesse
 experimento.
+
+\hypertarget{questuxe3o-2}{%
+\section{Questão 2}\label{questuxe3o-2}}
+
+Na tabela, \(D1\) representa a diferença entre as datas 2 e 1 e \(D2\) o
+mesmo para datas 4 e 3.
+
+\begin{longtable}{ccccc}
+\toprule
+Árvores & Data 1 & Data 2 & Data 3 & Data 4\\
+\midrule
+\endfirsthead
+\multicolumn{5}{@{}l}{\textit{(continued)}}\\
+\toprule
+Árvores & Data 1 & Data 2 & Data 3 & Data 4\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{arvore 1} & \cellcolor{gray!15}{30} & \cellcolor{gray!15}{58} & \cellcolor{gray!15}{115} & \cellcolor{gray!15}{120}\\
+arvore 2 & 33 & 69 & 156 & 172\\
+\cellcolor{gray!15}{arvore 3} & \cellcolor{gray!15}{30} & \cellcolor{gray!15}{51} & \cellcolor{gray!15}{108} & \cellcolor{gray!15}{115}\\
+arvore 4 & 32 & 62 & 167 & 179\\
+\cellcolor{gray!15}{arvore 5} & \cellcolor{gray!15}{30} & \cellcolor{gray!15}{49} & \cellcolor{gray!15}{125} & \cellcolor{gray!15}{142}\\*
+\end{longtable}
+
+Deseja-se testar se o crescimento entre os períodos é diferente.
+Interessa testar portanto se as médias de \(D1\) e \(D2\) são
+diferentes. Antes de realizar um teste de comparaçao de médias para
+medidas repetidas, i.e.~um teste \(t\) pareado, testa-se para igualdade
+de variâncias.
+
+Considerando \(H_0\) sendo a igualdade entre as variâncias, obtém-se
+p-valor 28, 36, 21, 30, 19. Ou seja, não se rejeita a hipótese de
+igualdade de variâncias.
+
+Tomando a hipótese de normalidade dos dados como verdadeira, realiza-se
+o teste \(t\) pareado, para variâncias iguais, com nível de confiança
+\(\gamma = 0,95\). A hipótese nula do teste é a igualdade entre as
+médias, de modo que o teste realizado é bilateral.
+
+O p-valor obtido no teste é de 0.014, de modo que é possível rejeitar a
+hipótese nula a \(\alpha = 0,05\). Ou seja, pode-se dizer que há uma
+diferença estatisticamente diferente entre os crescimentos nos dois
+períodos.
 
 \end{document}
