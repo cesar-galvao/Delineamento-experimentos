@@ -355,14 +355,13 @@ tabela_arvores <- data.frame(
          D2 = `data 4` - `data 3`)
 
 tabela_arvores %>%
-  select(-D1, -D2)%>%
   knitr::kable(
     format = "latex",
     align = "c",
     booktabs = TRUE,
     longtable = TRUE,
     linesep = "",
-    col.names = c("Árvores", "Data 1", "Data 2", "Data 3", "Data 4"),
+    col.names = c("Árvores", "Data 1", "Data 2", "Data 3", "Data 4", "D1", "D2"),
     escape = FALSE
     ) %>%
   kableExtra::kable_styling(
