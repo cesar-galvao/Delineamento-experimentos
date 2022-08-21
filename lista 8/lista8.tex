@@ -1,0 +1,215 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Experimentos Fatoriais},
+  pdfauthor={César A. Galvão - 19/0011572},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{helvet} \renewcommand\familydefault{\sfdefault}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Experimentos Fatoriais}
+\author{César A. Galvão - 19/0011572}
+\date{2022-08-19}
+
+\begin{document}
+\maketitle
+
+\newpage{}
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+\hypertarget{section}{%
+\section{}\label{section}}
+
+\hypertarget{modelo-e-anova}{%
+\subsection{Modelo e ANOVA}\label{modelo-e-anova}}
+
+É utilizado o modelo de experimentos fatoriais, representado por:
+
+\begin{align*}
+  y_{ijk} = \mu + \tau_i + \beta_j + \left( \tau\beta \right)_{ij} + e_{ijk}, \quad i = 1, 2,..., a; \quad j = 1, 2,..., b \quad k = 1, 2,..., n
+\end{align*}
+
+em que \(\mu\) é a média geral, \(\tau_i\) é o efeito do fator
+\textbf{vidro}, \(\beta_j\) é o efeito do fator \textbf{fósforo},
+\((\tau\beta)_{ij}\) é o efeito de interação entre os dois fatores e
+\(e_{ijk}\) é o desvio do elemento. Portanto, existem
+\(a \cdot b = 3 \cdot 2 = 6\) tratamentos possíveis para este
+experimento.
+
+\begin{longtable}{cccccc}
+\toprule
+term & df & sumsq & meansq & statistic & p.value\\
+\midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\textit{(continued)}}\\
+\toprule
+term & df & sumsq & meansq & statistic & p.value\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{phosphor} & \cellcolor{gray!15}{2} & \cellcolor{gray!15}{933.3333} & \cellcolor{gray!15}{466.6667} & \cellcolor{gray!15}{8.8421} & \cellcolor{gray!15}{0.0044}\\
+glass & 1 & 14450.0000 & 14450.0000 & 273.7895 & 0.0000\\
+\cellcolor{gray!15}{phosphor:glass} & \cellcolor{gray!15}{2} & \cellcolor{gray!15}{133.3333} & \cellcolor{gray!15}{66.6667} & \cellcolor{gray!15}{1.2632} & \cellcolor{gray!15}{0.3178}\\
+Residuals & 12 & 633.3333 & 52.7778 & NA & NA\\*
+\end{longtable}
+
+Pela tabela de ANOVA, os efeitos de ambos os fatores do experimento são
+significativos considerando mesmo \(\alpha = 0,01\). No entanto
+rejeita-se a hipótese de existência de interação entre os fatores. Ou
+seja, pode-se considerar os efeitos do tipo de vidro e do tipo de
+fósforo independentes.
+
+\hypertarget{estimadores}{%
+\subsection{Estimadores}\label{estimadores}}
+
+\begin{longtable}{cc}
+\toprule
+$\mu$ & $\sigma^2$\\
+\midrule
+\endfirsthead
+\multicolumn{2}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\mu$ & $\sigma^2$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{263.333} & \cellcolor{gray!15}{52.778}\\*
+\end{longtable}
+
+\begin{longtable}{cc}
+\toprule
+$\tau_1$ & $\tau_2$\\
+\midrule
+\endfirsthead
+\multicolumn{2}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\tau_1$ & $\tau_2$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{28.333} & \cellcolor{gray!15}{-28.333}\\*
+\end{longtable}
+
+\begin{longtable}{ccc}
+\toprule
+$\beta_1$ & $\beta_2$ & $\beta_3$\\
+\midrule
+\endfirsthead
+\multicolumn{3}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\beta_1$ & $\beta_2$ & $\beta_3$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{-3.333} & \cellcolor{gray!15}{10} & \cellcolor{gray!15}{-6.667}\\*
+\end{longtable}
+
+\begin{longtable}{cccccc}
+\toprule
+$\tau_1\beta_1$ & $\tau_1\beta_2$ & $\tau_1\beta_3$ & $\tau_2\beta_1$ & $\tau_2\beta_2$ & $\tau_2\beta_3$\\
+\midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\tau_1\beta_1$ & $\tau_1\beta_2$ & $\tau_1\beta_3$ & $\tau_2\beta_1$ & $\tau_2\beta_2$ & $\tau_2\beta_3$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{21.667} & \cellcolor{gray!15}{38.333} & \cellcolor{gray!15}{25} & \cellcolor{gray!15}{-28.333} & \cellcolor{gray!15}{-18.333} & \cellcolor{gray!15}{-38.333}\\*
+\end{longtable}
+
+parametro de nao centralidade: E(SQA/sigma\^{}2), SQA = (a-1)QMA
+
+\end{document}

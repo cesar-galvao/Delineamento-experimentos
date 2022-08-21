@@ -1,0 +1,166 @@
+---
+title: "Experimentos Fatoriais"
+author: "César A. Galvão - 19/0011572"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: 
+    toc: true
+    toc_depth: 2
+    number_sections: false
+    keep_tex: yes
+latex_engine: pdflatex
+header-includes:
+  \usepackage{helvet}
+  \renewcommand\familydefault{\sfdefault}
+include-before:
+- '`\newpage{}`{=latex}'
+---
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 9999)
+
+library(kableExtra)
+library(broom)
+library(tidyverse)
+```
+
+# 
+
+## Modelo e ANOVA
+
+```{r dados, echo = FALSE}
+
+a <- 2 #niveis de glass
+b <- 3 #niveis de phosphor
+
+glass <- factor(rep(c(1,1,1,2,2,2), 3))
+phosphor <- factor(rep(c(1,2,3), each = 6))
+values <- c(280,290,285,230,235,240,
+            300,310,295,260,240,235,
+            290,285,290,220,225,230)
+
+dados <- data.frame(glass, phosphor, values)
+```
+
+É utilizado o modelo de experimentos fatoriais, representado por:
+
+\begin{align*}
+  y_{ijk} = \mu + \tau_i + \beta_j + \left( \tau\beta \right)_{ij} + e_{ijk}, \quad i = 1, 2,..., a; \quad j = 1, 2,..., b \quad k = 1, 2,..., n
+\end{align*}
+
+em que $\mu$ é a média geral, $\tau_i$ é o efeito do fator **vidro**, $\beta_j$ é o efeito do fator **fósforo**, $(\tau\beta)_{ij}$ é o efeito de interação entre os dois fatores e $e_{ijk}$ é o desvio do elemento. Portanto, existem $a \cdot b = 3 \cdot 2 = 6$ tratamentos possíveis para este experimento.
+
+```{r anova, echo = FALSE}
+tabela_aov <- aov(values ~ phosphor*glass)
+
+tabela_aov %>% 
+  tidy() %>%
+knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 4
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+  
+```
+
+Pela tabela de ANOVA, os efeitos de ambos os fatores do experimento são significativos considerando mesmo $\alpha = 0,01$. No entanto rejeita-se a hipótese de existência de interação entre os fatores. Ou seja, pode-se considerar os efeitos do tipo de vidro e do tipo de fósforo independentes.
+
+## Estimadores
+
+```{r parametros, echo = FALSE}
+mu <- mean(values)
+qmres <- tidy(tabela_aov)$meansq[4]
+
+taus <- tapply(values, glass, mean)-mu
+betas <- tapply(values, phosphor, mean)-mu
+taubeta <- tapply(values, paste(glass, phosphor), mean)-mu
+
+data.frame(mu, qmres)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    col.names = c("$\\mu$", "$\\sigma^2$"),
+    escape = FALSE,
+    digits = 3
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+data.frame(taus, t = c(1:2))%>%
+  pivot_wider(names_from = t, values_from = taus)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    col.names = c("$\\tau_1$", "$\\tau_2$"),
+    escape = FALSE,
+    digits = 3
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+data.frame(betas, b = c(1:3))%>%
+  pivot_wider(names_from = b, values_from = betas)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    col.names = c("$\\beta_1$", "$\\beta_2$", "$\\beta_3$"),
+    escape = FALSE,
+    digits = 3
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+
+data.frame(taubeta, tb = c(1:6))%>%
+  pivot_wider(names_from = tb, values_from = taubeta)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    col.names = c("$\\tau_1\\beta_1$", "$\\tau_1\\beta_2$", "$\\tau_1\\beta_3$", "$\\tau_2\\beta_1$", "$\\tau_2\\beta_2$", "$\\tau_2\\beta_3$"),
+    escape = FALSE,
+    digits = 3
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+
+```{r grafico, echo = FALSE}
+interaction.plot(glass, phosphor, values)
+
+interaction.plot(phosphor, glass, values)
+```
+
+
+parametro de nao centralidade: E(SQA/sigma^2), SQA = (a-1)QMA
