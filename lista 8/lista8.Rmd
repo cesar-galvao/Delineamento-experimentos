@@ -1,11 +1,11 @@
 ---
-title: "Experimentos Fatoriais"
+title: "Lista 1 modulo 3"
 author: "César A. Galvão - 19/0011572"
 date: "`r Sys.Date()`"
 output:
   pdf_document: 
     toc: true
-    toc_depth: 2
+    toc_depth: 3
     number_sections: false
     keep_tex: yes
 latex_engine: pdflatex
@@ -26,6 +26,7 @@ options(scipen = 9999)
 library(kableExtra)
 library(broom)
 library(tidyverse)
+library(magrittr)
 ```
 
 # 
@@ -155,12 +156,108 @@ data.frame(taubeta, tb = c(1:6))%>%
       stripe_color = "gray!15")
 ```
 
+## Gráficos de interação
 
-```{r grafico, echo = FALSE}
+As linhas paralelas do gráfico a seguir sugerem não haver interação entre os fatores, além de indicar possível diferença entre o fósfóro tipo 2 e os demais para vidro tipo 1.
+
+```{r grafico1, echo = FALSE}
 interaction.plot(glass, phosphor, values)
 
+```
+
+O gráfico seguinte também sugere não haver interação entre fatores, mas aparentemente deve haver uma diferença de desempenho quanto ao tipo de vidro, independentemente do tipo de fósforo.
+
+```{r grafico2, echo = FALSE}
 interaction.plot(phosphor, glass, values)
 ```
 
+## Decomposição de graus de liberdade
 
-parametro de nao centralidade: E(SQA/sigma^2), SQA = (a-1)QMA
+A seguir são decompostos os graus de liberdade para o tipo de fósforo, quando o tipo de vidro é 1.
+
+### Teste F
+
+A seguir, o teste F é realizado para os tipos de fósforo quando o tipo do vidro é 1. Considera-se $H_0$ como a igualdade entre efeitos de fósforo e $H_1$ a diferença de pelo menos um nível em relação aos demais. O p-valor do teste é calculado da seguinte forma: 
+
+\begin{align*}
+  \text{p-valor} = 1-F\left( \frac{SQ_{\text{fosf}}/2}{QM_{\text{res}}}, gl1 = 2, gl2 = 12 \right)
+\end{align*}
+
+Obtém-se as seguintes probabilidades, indicando que não há, a nível de significância $\alpha = 0,05$, diferença entre os tipos de fósforo.
+
+```{r testef, echo = FALSE}
+medias_pho_glass1 <- dados[dados$glass==1, ] %$%
+  tapply(values, phosphor, mean)
+
+sq_pho_glass1 <- 3*(medias_pho_glass1 - mean(dados[dados$glass==1, "values"]))^2
+
+results <- 1-pf((sq_pho_glass1/2)/qmres, 2, 12)
+
+data.frame(results, names = c("P1", "P2", "P3"))%>%
+  pivot_wider(everything(),names_from = "names", values_from = "results")%>%
+  mutate(Fosforo = "p-valor")%>%
+  select(Fosforo, everything()) %>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 4
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+### Tukey
+
+O teste de Tukey é realizado utilizando a função `TukeyHDS()` e os resultados são expostos abaixo. Da mesma forma, a hipótese nula é rejeitada e diz-se que não há diferença entre os trsão superiores àqueles do teste F.
+
+```{r, echo = FALSE}
+
+casos <- c("2:1-1:1", "3:1-1:1", "3:1-2:1")
+TukeyHSD(tabela_aov) %>% 
+  tidy() %>%
+  filter(contrast %in% casos)%>%
+  select(-`null.value`)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 4
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+## Probabilidade de erro tipo II
+
+
+```{r erro2, echo = FALSE}
+
+tau <- c(20, -20)
+n <- 9
+
+phi2 <- n*(sum(tau^2))/qmres
+
+fcrit <- qf(.95, 1, 8)
+
+perro2 <- pf(fcrit, 1, 8, ncp = phi2)
+
+```
+Calcula-se a probabilidade de erro tipo 2 considerando:
+
+* $\tau = \{20, -20\}$;
+* $n = 9$;
+* $\phi^2 = n\frac{\sum \tau^2}{QM_\text{res}}$;
+* $F_{crit}$ = `r round(fcrit,4)`;
+
+Obtém-se erro tipo II igual muito próximo a zero, da ordem de $5\cdot10^{-16}$.

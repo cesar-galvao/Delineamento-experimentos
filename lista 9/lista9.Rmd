@@ -1,0 +1,200 @@
+---
+title: "Lista 2 modulo 3"
+author: "César A. Galvão - 19/0011572"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: 
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    keep_tex: yes
+latex_engine: pdflatex
+header-includes:
+  \usepackage{helvet}
+  \renewcommand\familydefault{\sfdefault}
+include-before:
+- '`\newpage{}`{=latex}'
+---
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 9999)
+
+library(kableExtra)
+library(broom)
+library(tidyverse)
+library(magrittr)
+```
+
+# {.unnumbered}
+
+```{r dados, echo = FALSE}
+#contrastes e niveis dos fatores
+fa <- rep(rep(c(-1,1), 2), 4)
+niveis_A <- c(.55, .59)
+fb <- rep(rep(c(-1,1), each = 2), 4)
+niveis_B <- c(10, 15)
+
+#replicas e fator das réplicas
+n <- 4
+replicas <- factor(rep(c("I", "II", "III", "IV"), each = 4))
+
+#vetor de valores
+y <- c(14.037, 13.88, 14.821, 14.888,
+       16.165, 13.86, 14.757, 14.921,
+       13.972, 14.032, 14.843, 14.415,
+       13.907, 13.914, 14.878, 14.932)
+
+#fator de interação
+fab <- fa*fb
+
+#tabela com dados
+dados <- data.frame(
+  A = as.factor(fa), niveis_A = niveis_A, B = as.factor(fb), niveis_B = niveis_B,
+  AB = fab, replicas, y
+)
+
+#matriz de desenho
+desenho <- unique(data.frame(fa, fb, fab))
+```
+
+## Efeitos dos fatores
+
+Para calcular os efeitos dos fatores, calcula-se os totais ($a$, $b$, $ab$ e $(1)$) utilizando os seguintes contrastes:
+
+```{r contrastes, echo = FALSE}
+desenho %>%
+  mutate(Totais = c("(1)", "a", "b", "ab"))%>%
+  select(Totais, everything())%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3, 
+    col.names = c("Totais", "A", "B", "AB")
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+Para calcular a magnitude do efeito A, por exemplo, calcula-se:
+
+\begin{align}
+  A = \frac{a+ab-b-(1)}{2n} = \frac{58.081 + 59.299 + 55.686 + 59.156}{8} = -0.31725
+\end{align}
+
+Obtem-se dessa forma os seguintes efeitos:
+
+```{r efeitos-fatores, echo = FALSE}
+totais <- tapply(y, paste(fa, fb), sum)
+#A = a+ab-b-(1)
+aa <- sum(totais[3:4]-totais[1:2])/(2*n) 
+#B = b+ab-a-(1)
+bb <- sum(totais[c(2,4)]-totais[c(1,3)])/(2*n)
+#AB = ab+(1)-a-b
+ab <- sum(totais[c(1,4)]-totais[c(2,3)])/(2*n)
+
+data.frame(
+  A = aa, B = bb, AB = ab
+)%>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 4
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+## Análise de variância
+
+É possível observar na tabela de ANOVA a seguir que as diferenças entre níveis dos fatores não são significativas com $\alpha = 0,05$, bem como a interação entre os fatores.
+
+```{r anova, echo = FALSE}
+#A e B como fatores
+
+tabela_aov <- aov(y ~ A*B, data = dados)
+
+tabela_aov %>%
+  tidy() %>%
+  knitr::kable(
+    format = "latex",
+    align = "lcccc",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    col.names = c("Fonte de variação", "g.l.", "SQ", "MQ", "Estatística F", "p-valor"),
+     digits = 4
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+## Modelo de efeitos e estimadores
+
+Considera-se o seguinte modelo de efeitos teórico
+
+\begin{align}
+  y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}, \quad
+  \begin{cases}
+    i = 1, ..., a\\
+    j = 1, ..., b\\
+    k = 1, ..., n
+  \end{cases}
+\end{align}
+
+em que $\mu$ é média geral da variável resposta, $\tau_i$ do i-ésimo nível do tratamento A, $\beta_j$ do j-ésimo nível do tratamento B, $(\tau\beta)_{ij}$ é o efeito da interação dos fatores A e B e $\varepsilon_{ijk}$ é o erro aleatório.
+
+Considera-se como hipóteses nulas para a análise de variância a igualdade entre os níveis de cada tratamento e como hipóteses alternativas a existência de pelo menos um nível diferente dos demais.
+
+## RESIDUOS NAO SAO NORMAIS, ANOVA NÃO É BOA.
+
+Conforme a tabela de análise de variância apresentada, não foram rejeitadas as hipóteses nulas para nenhum dos tratamentos e, portanto, pode-se considerar o modelo reduzido
+
+\begin{align}
+  y_{ijk} = \mu + \varepsilon_{ijk}, \quad
+  \begin{cases}
+    i = 1, ..., a\\
+    j = 1, ..., b\\
+    k = 1, ..., n
+  \end{cases}
+\end{align}
+
+em que a variância pode ser explicada unicamente pelo erro aleatório.
+
+## DÚVIDA - variância por S ou QMRES? Calculamos os outros estimadores?
+
+
+## Modelo de regressão linear
+
+Cada beta é metade do efeito do fator
+
+
+## Gráfico de superfície
+modelo <- lm()
+
+persp.lm(modelo, ~fatores)
+contour(modelo ~fatores)
+
+## Decodificação e projeção da resposta
+
+p.238 livro
+
+Como projetar?
+
+
