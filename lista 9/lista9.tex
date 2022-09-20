@@ -80,7 +80,7 @@
 
 \title{Lista 2 modulo 3}
 \author{César A. Galvão - 19/0011572}
-\date{2022-09-18}
+\date{2022-09-20}
 
 \begin{document}
 \maketitle
@@ -202,7 +202,7 @@ alternativas a existência de pelo menos um nível diferente dos demais.
 
 Conforme a tabela de análise de variância apresentada, não foram
 rejeitadas as hipóteses nulas para nenhum dos tratamentos e, portanto,
-pode-se considerar o modelo reduzido
+poderíamos considerar o modelo reduzido
 
 \begin{align}
   y_{ijk} = \mu + \varepsilon_{ijk}, \quad
@@ -215,12 +215,126 @@ pode-se considerar o modelo reduzido
 
 em que a variância pode ser explicada unicamente pelo erro aleatório.
 
-\hypertarget{duxfavida---variuxe2ncia-por-s-ou-qmres-calculamos-os-outros-estimadores}{%
-\subsection{DÚVIDA - variância por S ou QMRES? Calculamos os outros
-estimadores?}\label{duxfavida---variuxe2ncia-por-s-ou-qmres-calculamos-os-outros-estimadores}}
+Para efeito de exercício, calculamos os estimadores:
+
+\begin{longtable}{cc}
+\toprule
+$\hat{\mu}$ & $\hat{\sigma}^2$\\
+\midrule
+\endfirsthead
+\multicolumn{2}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\hat{\mu}$ & $\hat{\sigma}^2$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{14.51} & \cellcolor{gray!15}{0.32}\\*
+\end{longtable}
+
+\begin{longtable}{cccccc}
+\toprule
+$\tau_1$ & $\tau_2$ & $\beta_1$ & $\beta_2$ & $(\tau\beta)_1$ & $(\tau\beta)_2$\\
+\midrule
+\endfirsthead
+\multicolumn{6}{@{}l}{\textit{(continued)}}\\
+\toprule
+$\tau_1$ & $\tau_2$ & $\beta_1$ & $\beta_2$ & $(\tau\beta)_1$ & $(\tau\beta)_2$\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{0.159} & \cellcolor{gray!15}{-0.159} & \cellcolor{gray!15}{-0.293} & \cellcolor{gray!15}{0.293} & \cellcolor{gray!15}{-0.141} & \cellcolor{gray!15}{0.141}\\*
+\end{longtable}
+
+\hypertarget{gruxe1fico-de-interauxe7uxe3o}{%
+\subsection{Gráfico de interação}\label{gruxe1fico-de-interauxe7uxe3o}}
+
+O gráfico de interação a seguir sugere uma diferença entre níveis de
+resposta para o fator A quando o fator B está em nível baixo, mas não
+sugerem o mesmo para o nível alto do fator B. Além disso, o nível de
+resposta parece aumentar genericamente quando se aumenta o nível do
+fator B.
+
+\begin{center}\includegraphics[width=0.6\linewidth]{lista9_files/figure-latex/graf-interacao-1} \end{center}
+
+Já o seguinte sugere haver uma diferença maior entre os níveis de
+resposta quando se aumenta o fator A. O desempenho com nível baixo do
+fator B já parece inferior com nível baixo de A e parece decrescer
+quando se aumenta o nível de A. Já o nível alto de B parece pouco
+afetado em relação à variação de A.
+
+\begin{center}\includegraphics[width=0.6\linewidth]{lista9_files/figure-latex/graf-interacao2-1} \end{center}
 
 \hypertarget{modelo-de-regressuxe3o-linear}{%
 \subsection{Modelo de regressão
 linear}\label{modelo-de-regressuxe3o-linear}}
+
+Considerando as variáveis codificadas \(x_1, x_2, x_3 \in \{-1, 1\}\)
+correspondentes a níveis baixos e altos dos fatores A, B e a interação
+AB, é possível construir um modelo de regressão linear. Seus
+coeficientes estimados por mínimos quadrados ordinários são obtidos como
+a metade da magnitude de efeito dos fatores e o intercepto é obtido pela
+média geral da amostra.
+
+\begin{align}
+  \hat{y} &= \hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \hat{\beta}_3 x_3 \nonumber \\
+   &= 14.514 - 0.152 x_1 + 0.293 x_2 +  0.14 x_3 \label{modelo_lin}
+\end{align}
+
+\hypertarget{gruxe1fico-de-superfuxedcie}{%
+\subsection{Gráfico de superfície}\label{gruxe1fico-de-superfuxedcie}}
+
+O gráfico de superfície correspondente a (\ref{modelo_lin}) é exibido a
+seguir:
+
+\begin{center}\includegraphics[width=0.75\linewidth]{lista9_files/figure-latex/superficie-1} \end{center}
+
+\hypertarget{projeuxe7uxe3o-de-resposta}{%
+\subsection{Projeção de resposta}\label{projeuxe7uxe3o-de-resposta}}
+
+Para facilitar a análise e identicar níveis de resposta, podemos também
+avaliar graficamente os níveis de resposta utilizando o gráfico de
+curvas de nível a seguir.
+
+\begin{center}\includegraphics[width=0.75\linewidth]{lista9_files/figure-latex/curvas-nivel-1} \end{center}
+
+Se desejamos obter um valor de 14.5\(\mu m\) na variável resposta,
+podemos inicialmente tentar seguir a curva de nível correspondente no
+gráfico de curvas. Enquanto não fica claro qual deveria ser o nível do
+fator B se utilizamos o fator A em nível alto, o gráfico evidencia que
+ambos os fatores em nível baixo deveriam render a resposta desejada.
+
+Para auxiliar a análise, construimos intervalos de confiança com
+\(\alpha = 0,95\) para a média de cada ponto fatorial. Como já avaliado,
+o ponto em que ambos os fatores têm nível baixo tem a média centrada
+exatamente no nível de resposta desejado, enquanto outros dois pontos
+teriam a média um pouco deslocada porém com IC que conteriam o valor
+desejado. Conclui-se que a recomendação seria a opção de fatores A e B
+ambos em nível baixo.
+
+\begin{longtable}{ccccc}
+\toprule
+A & B & LI & $\bar{Y}$ & LS\\
+\midrule
+\endfirsthead
+\multicolumn{5}{@{}l}{\textit{(continued)}}\\
+\toprule
+A & B & LI & $\bar{Y}$ & LS\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\cellcolor{gray!15}{-1} & \cellcolor{gray!15}{-1} & \cellcolor{gray!15}{14.013} & \cellcolor{gray!15}{14.520} & \cellcolor{gray!15}{15.028}\\
+1 & -1 & 13.414 & 13.922 & 14.429\\
+\cellcolor{gray!15}{-1} & \cellcolor{gray!15}{1} & \cellcolor{gray!15}{14.317} & \cellcolor{gray!15}{14.825} & \cellcolor{gray!15}{15.332}\\
+1 & 1 & 14.281 & 14.789 & 15.297\\*
+\end{longtable}
 
 \end{document}

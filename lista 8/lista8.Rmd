@@ -37,6 +37,7 @@ library(magrittr)
 
 a <- 2 #niveis de glass
 b <- 3 #niveis de phosphor
+n <- 3
 
 glass <- factor(rep(c(1,1,1,2,2,2), 3))
 phosphor <- factor(rep(c(1,2,3), each = 6))
@@ -180,37 +181,30 @@ A seguir são decompostos os graus de liberdade para o tipo de fósforo, quando 
 A seguir, o teste F é realizado para os tipos de fósforo quando o tipo do vidro é 1. Considera-se $H_0$ como a igualdade entre efeitos de fósforo e $H_1$ a diferença de pelo menos um nível em relação aos demais. O p-valor do teste é calculado da seguinte forma: 
 
 \begin{align*}
-  \text{p-valor} = 1-F\left( \frac{SQ_{\text{fosf}}/2}{QM_{\text{res}}}, gl1 = 2, gl2 = 12 \right)
+  \text{p-valor} = 1-F\left( \frac{QM_{\text{fosf-1}}}{QM_{\text{res}}}, gl1 = 2, gl2 = 12 \right)
 \end{align*}
 
-Obtém-se as seguintes probabilidades, indicando que não há, a nível de significância $\alpha = 0,05$, diferença entre os tipos de fósforo.
-
 ```{r testef, echo = FALSE}
-medias_pho_glass1 <- dados[dados$glass==1, ] %$%
-  tapply(values, phosphor, mean)
+#Com teste F
+a_v1 <- 3 #niveis fósforo
+b_v1 <- 1 #niveis vidro
+n_v1 <- 3 #repetições
 
-sq_pho_glass1 <- 3*(medias_pho_glass1 - mean(dados[dados$glass==1, "values"]))^2
+dados_vidro1 <- dados[glass == 1,]
 
-results <- 1-pf((sq_pho_glass1/2)/qmres, 2, 12)
+#modelo aov com dados filtrados
+mod2 <- aov(dados_vidro1$values ~ dados_vidro1$phosphor)
+summary(mod2)
 
-data.frame(results, names = c("P1", "P2", "P3"))%>%
-  pivot_wider(everything(),names_from = "names", values_from = "results")%>%
-  mutate(Fosforo = "p-valor")%>%
-  select(Fosforo, everything()) %>%
-  knitr::kable(
-    format = "latex",
-    align = "c",
-    booktabs = TRUE,
-    longtable = TRUE,
-    linesep = "",
-    escape = FALSE,
-    digits = 4
-    ) %>%
-  kableExtra::kable_styling(
-      position = "center",
-      latex_options = c("striped", "repeat_header"),
-      stripe_color = "gray!15")
+#médias de fósforo com vidro tipo 1
+medias_fosforo_v1 <- tapply(dados_vidro1$values, dados_vidro1$phosphor, mean)
+
+qm_fosforo_v1 <- (mod2 %>% tidy())$meansq[1]
+
+pvalor_v1 <- 1-pf(qm_fosforo_v1/qmres, 2, 12)
 ```
+
+Obtém-se p-valor igual a `r round(pvalor_v1, 4)`, o que sugere que há de fato diferença entre os níveis de resposta quando se considera apenas o vidro tipo 1.
 
 ### Tukey
 
@@ -238,26 +232,29 @@ TukeyHSD(tabela_aov) %>%
       stripe_color = "gray!15")
 ```
 
-## Probabilidade de erro tipo II
+## Probabilidade de erro tipo II para vidros
 
 
 ```{r erro2, echo = FALSE}
 
 tau <- c(20, -20)
-n <- 9
 
-phi2 <- n*(sum(tau^2))/qmres
+#phi ajustado para apenas um dos fatores
+phi2 <- n*b*(sum(tau^2))/qmres
 
-fcrit <- qf(.95, 1, 8)
+#fcrit <- qf(.95, 1, 12)
+mqvidro <-(tabela_aov %>% tidy() %>% pull(meansq))[2]
 
-perro2 <- pf(fcrit, 1, 8, ncp = phi2)
+fvidro <- mqvidro/qmres
+
+perro2 <- pf(fvidro, 1, 12, ncp = phi2)
 
 ```
 Calcula-se a probabilidade de erro tipo 2 considerando:
 
 * $\tau = \{20, -20\}$;
-* $n = 9$;
-* $\phi^2 = n\frac{\sum \tau^2}{QM_\text{res}}$;
-* $F_{crit}$ = `r round(fcrit,4)`;
+* $n = 3, a = 2, b = 3$;
+* $\phi^2 = nb \frac{\sum \tau^2}{QM_\text{res}}$;
+* $F_{crit} = \frac{QM_{\text{vidro}}}{QM_{\text{Res}}}$ = `r mqvidro`/`r round(qmres,3)` = `r round(fvidro,4)`;
 
-Obtém-se erro tipo II igual muito próximo a zero, da ordem de $5\cdot10^{-16}$.
+Obtém-se erro tipo II igual a `r round(perro2,3)`.

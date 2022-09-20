@@ -1,0 +1,93 @@
+---
+title: "Lista 2 modulo 3"
+author: "César A. Galvão - 19/0011572"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: 
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    keep_tex: yes
+latex_engine: pdflatex
+header-includes:
+  \usepackage{helvet}
+  \renewcommand\familydefault{\sfdefault}
+include-before:
+- '`\newpage{}`{=latex}'
+---
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 9999)
+
+library(kableExtra)
+library(broom)
+library(tidyverse)
+library(magrittr)
+library(cowplot)
+library(rsm)
+```
+
+# {.unnumbered}
+
+```{r dados, echo = FALSE}
+#contrastes e niveis dos fatores
+fa <- rep(c(-1,1), 4) %>% rep(2)
+niveis_A <- c(10, 12)
+fb <- rep(rep(c(-1,1), each = 2), 2)%>% rep(2)
+niveis_B <- c(25, 30)
+fc <-rep(c(-1,1), each = 4)%>% rep(2)
+niveis_C <- c(200,250)
+
+#replicas e fator das réplicas
+n <- 2
+replicas <- factor(rep(c("I", "II"), each = 8))
+
+#vetor de valores
+y <- c(-3,-1,0,1,-1,0,2,3,
+       -1,0,2,1,1,1,6,5)
+
+#fator de interação
+fab <- fa*fb
+fac <- fa*fc
+fbc <- fb*fc
+fabc <- fa*fb*fc
+
+#tabela com dados
+dados <- data.frame(
+  A = as.factor(fa), niveis_A = niveis_A, B = as.factor(fb), niveis_B = niveis_B, C = as.factor(fc), niveis_C = niveis_C, AB = fab, AC = fac, BC = fbc, ABC = fabc, replicas, y
+)
+
+#matriz de desenho
+desenho <- unique(data.frame(fa, fb, fab, fac, fbc, fabc))
+```
+
+## Análise de Variância
+
+```{r anova, echo = FALSE}
+modelo <- aov(y ~fa*fb*fc)
+
+tidy(modelo) %>%
+  knitr::kable(
+    format = "latex",
+    align = "c",
+    booktabs = TRUE,
+    longtable = TRUE,
+    linesep = "",
+    escape = FALSE,
+    digits = 3, 
+    col.names = c("Totais", "A", "B", "AB")
+    ) %>%
+  kableExtra::kable_styling(
+      position = "center",
+      latex_options = c("striped", "repeat_header"),
+      stripe_color = "gray!15")
+```
+
+
+
+
+

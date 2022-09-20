@@ -80,7 +80,7 @@
 
 \title{Lista 1 modulo 3}
 \author{César A. Galvão - 19/0011572}
-\date{2022-09-17}
+\date{2022-09-20}
 
 \begin{document}
 \maketitle
@@ -242,28 +242,19 @@ fósforo e \(H_1\) a diferença de pelo menos um nível em relação aos
 demais. O p-valor do teste é calculado da seguinte forma:
 
 \begin{align*}
-  \text{p-valor} = 1-F\left( \frac{SQ_{\text{fosf}}/2}{QM_{\text{res}}}, gl1 = 2, gl2 = 12 \right)
+  \text{p-valor} = 1-F\left( \frac{QM_{\text{fosf-1}}}{QM_{\text{res}}}, gl1 = 2, gl2 = 12 \right)
 \end{align*}
 
-Obtém-se as seguintes probabilidades, indicando que não há, a nível de
-significância \(\alpha = 0,05\), diferença entre os tipos de fósforo.
+\begin{verbatim}
+##                       Df Sum Sq Mean Sq F value Pr(>F)  
+## dados_vidro1$phosphor  2  466.7  233.33   7.636 0.0224 *
+## Residuals              6  183.3   30.56                 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
 
-\begin{longtable}{cccc}
-\toprule
-Fosforo & P1 & P2 & P3\\
-\midrule
-\endfirsthead
-\multicolumn{4}{@{}l}{\textit{(continued)}}\\
-\toprule
-Fosforo & P1 & P2 & P3\\
-\midrule
-\endhead
-
-\endfoot
-\bottomrule
-\endlastfoot
-\cellcolor{gray!15}{p-valor} & \cellcolor{gray!15}{0.3178} & \cellcolor{gray!15}{0.0976} & \cellcolor{gray!15}{0.7351}\\*
-\end{longtable}
+Obtém-se p-valor igual a 0.0364, o que sugere que há de fato diferença
+entre os níveis de resposta quando se considera apenas o vidro tipo 1.
 
 \hypertarget{tukey}{%
 \subsubsection{Tukey}\label{tukey}}
@@ -292,9 +283,9 @@ phosphor:glass & 3:1-1:1 & 3.3333 & -16.5908 & 23.2575 & 0.9918\\
 \cellcolor{gray!15}{phosphor:glass} & \cellcolor{gray!15}{3:1-2:1} & \cellcolor{gray!15}{-13.3333} & \cellcolor{gray!15}{-33.2575} & \cellcolor{gray!15}{6.5908} & \cellcolor{gray!15}{0.2855}\\*
 \end{longtable}
 
-\hypertarget{probabilidade-de-erro-tipo-ii}{%
-\subsection{Probabilidade de erro tipo
-II}\label{probabilidade-de-erro-tipo-ii}}
+\hypertarget{probabilidade-de-erro-tipo-ii-para-vidros}{%
+\subsection{Probabilidade de erro tipo II para
+vidros}\label{probabilidade-de-erro-tipo-ii-para-vidros}}
 
 Calcula-se a probabilidade de erro tipo 2 considerando:
 
@@ -303,14 +294,14 @@ Calcula-se a probabilidade de erro tipo 2 considerando:
 \item
   \(\tau = \{20, -20\}\);
 \item
-  \(n = 9\);
+  \(n = 3, a = 2, b = 3\);
 \item
-  \(\phi^2 = n\frac{\sum \tau^2}{QM_\text{res}}\);
+  \(\phi^2 = nb \frac{\sum \tau^2}{QM_\text{res}}\);
 \item
-  \(F_{crit}\) = 5.3177;
+  \(F_{crit} = \frac{QM_{\text{vidro}}}{QM_{\text{Res}}}\) =
+  14450/52.778 = 273.7895;
 \end{itemize}
 
-Obtém-se erro tipo II igual muito próximo a zero, da ordem de
-\(5\cdot10^{-16}\).
+Obtém-se erro tipo II igual a 0.907.
 
 \end{document}
