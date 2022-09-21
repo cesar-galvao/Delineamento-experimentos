@@ -242,7 +242,6 @@ tau <- c(20, -20)
 #phi ajustado para apenas um dos fatores
 phi2 <- n*b*(sum(tau^2))/qmres
 
-#fcrit <- qf(.95, 1, 12)
 mqvidro <-(tabela_aov %>% tidy() %>% pull(meansq))[2]
 
 fvidro <- mqvidro/qmres

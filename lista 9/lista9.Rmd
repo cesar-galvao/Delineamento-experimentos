@@ -239,11 +239,11 @@ interaction.plot(fa, fb, y)
 
 ## Modelo de regressão linear
 
-Considerando as variáveis codificadas $x_1, x_2, x_3 \in \{-1, 1\}$ correspondentes a níveis baixos e altos dos fatores A, B e a interação AB, é possível construir um modelo de regressão linear. Seus coeficientes estimados por mínimos quadrados ordinários são obtidos como a metade da magnitude de efeito dos fatores e o intercepto é obtido pela média geral da amostra.
+Considerando as variáveis codificadas $X_1, X_2 \in \{-1, 1\}$ correspondentes a níveis baixos e altos dos fatores A, B e a interação AB ($X_1X_2$), é possível construir um modelo de regressão linear. Seus coeficientes estimados por mínimos quadrados ordinários são obtidos como a metade da magnitude de efeito dos fatores e o intercepto é obtido pela média geral da amostra.
 
 \begin{align}
-  \hat{y} &= \hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \hat{\beta}_3 x_3 \nonumber \\
-   &= 14.514 - 0.152 x_1 + 0.293 x_2 +  0.14 x_3 \label{modelo_lin}
+  \hat{y} &= \hat{\beta}_0 + \hat{\beta}_1 X_1 + \hat{\beta}_2 X2 + \hat{\beta}_3 X_1X_2 \nonumber \\
+   &= 14.514 - 0.152 X_1 + 0.293 X_2 +  0.14 X_1X_2 \label{modelo_lin}
 \end{align}
 
 
