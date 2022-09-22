@@ -34,7 +34,6 @@ library(rsm)
 library(lmtest)
 ```
 
-# {.unnumbered}
 
 # Questão 1
 
